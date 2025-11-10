@@ -1,0 +1,960 @@
+********************************************************************************
+* DUPLICATOR LITE: Install-Log
+* STEP-0 START @ 12:51:44
+* NOTICE: Do NOT post to public sites or forums!!
+********************************************************************************
+PACKAGE INFO________ ORIGINAL SERVER                        |CURRENT SERVER
+OS__________________: Linux                                 |Linux
+PHP VERSION_________: 8.1.33                                |8.1.33
+********************************************************************************
+CURRENT SERVER INFO
+PHP_________________: 8.1.33 | SAPI: litespeed
+PHP MEMORY__________: 4294967296 | SUHOSIN: disabled
+ARCHITECTURE________: 64-bit
+SERVER______________: LiteSpeed
+DOC ROOT____________: "/home/autobusmedinaaza/public_html"
+REQUEST URL_________: "https://autobusmedinaazahara.com"
+********************************************************************************
+OVERWRITE PARAMS
+ *** FROM PACKAGE
+PARAM SET KEY[blogname]
+********************************************************************************
+MAINTENANCE MODE DISABLE
+INSTALLER INFO
+
+TEMPLATE____________: "base"
+SECURE MODE_________: "none"
+URL PLUGINS_________: https://autobusmedinaazahara.com/wp-content/plugins
+VALIDATE ON START___: "normal"
+PATH_NEW____________: "/home/autobusmedinaaza/public_html"
+URL_NEW_____________: "https://autobusmedinaazahara.com"
+********************************************************************************
+ARCHIVE INFO
+
+ARCHIVE NAME________: "/home/autobusmedinaaza/public_html/ult3_[HASH]_20251106121014_archive.zip"
+ARCHIVE SIZE________: 501.44MB
+CREATED_____________: 2025-11-06 12:10:14
+WP VERSION__________: 6.8.3
+DUP VERSION_________: 1.5.14
+LICENSE_____________: Free version
+DB VERSION__________: 11.4.8
+DB FILE SIZE________: 19.77MB
+DB TABLES___________: 99
+DB ROWS_____________: 29050
+URL HOME____________: https://autobusmedinaazahara.com
+URL CORE____________: https://autobusmedinaazahara.com
+URL CONTENT_________: https://autobusmedinaazahara.com/wp-content
+URL UPLOAD__________: https://autobusmedinaazahara.com/wp-content/uploads
+URL PLUGINS_________: https://autobusmedinaazahara.com/wp-content/plugins
+URL MU PLUGINS______: https://autobusmedinaazahara.com/wp-content/mu-plugins
+URL THEMES__________: https://autobusmedinaazahara.com/wp-content/themes
+PATH HOME___________: /home/autobusmedinaaza/public_html
+PATH ABS____________: /home/autobusmedinaaza/public_html
+PATH WPCONFIG_______: /home/autobusmedinaaza/public_html
+PATH WPCONTENT______: /home/autobusmedinaaza/public_html/wp-content
+PATH UPLOADS________: /home/autobusmedinaaza/public_html/wp-content/uploads
+PATH PLUGINS________: /home/autobusmedinaaza/public_html/wp-content/plugins
+PATH MUPLUGINS______: /home/autobusmedinaaza/public_html/wp-content/mu-plugins
+PATH THEMES_________: /home/autobusmedinaaza/public_html/wp-content/themes
+
+SUBSITES
+SUBSITE [ID:   1] "autobusmedinaazahara.com/"
+
+PLUGINS
+PLUGIN [SLUG:advanced-custom-fields-pro/acf.php                ][ON:true ]  Advanced Custom Fields PRO
+PLUGIN [SLUG:all-in-one-wp-migration/all-in-one-wp-migration.php][ON:true ]  All-in-One WP Migration and Backup
+PLUGIN [SLUG:better-search-replace/better-search-replace.php   ][ON:true ]  Better Search Replace
+PLUGIN [SLUG:complianz-gdpr/complianz-gpdr.php                 ][ON:false]  Complianz | GDPR/CCPA Cookie Consent
+PLUGIN [SLUG:contact-form-7/wp-contact-form-7.php              ][ON:true ]  Contact Form 7
+PLUGIN [SLUG:duplicator/duplicator.php                         ][ON:true ]  Duplicator
+PLUGIN [SLUG:gtranslate/gtranslate.php                         ][ON:true ]  GTranslate
+PLUGIN [SLUG:litespeed-cache/litespeed-cache.php               ][ON:true ]  LiteSpeed Cache
+PLUGIN [SLUG:maintenance/maintenance.php                       ][ON:true ]  Maintenance
+PLUGIN [SLUG:seo-by-rank-math/rank-math.php                    ][ON:true ]  Rank Math SEO
+PLUGIN [SLUG:seo-by-rank-math-pro/rank-math-pro.php            ][ON:true ]  Rank Math SEO PRO
+PLUGIN [SLUG:sistema-reservas/sistema-reservas.php             ][ON:true ]  Sistema de Reservas
+PLUGIN [SLUG:wordfence/wordfence.php                           ][ON:true ]  Wordfence Security
+PLUGIN [SLUG:wp-file-manager/file_folder_manager.php           ][ON:true ]  WP File Manager
+
+********************************************************************************
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/ctrls/ctrl.base.php:227][DELTA:   0.17359]  MESSAGE:END RENDER PAGE
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [sparam_s1] START
+AJAX ACTION [sparam_s1] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+STEP ACTION: "on-validate"
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/ctrls/ctrl.base.php:227][DELTA:   0.11233]  MESSAGE:END RENDER PAGE
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [validate] START
+START TEST "Archive Check" [CLASS: DUPX_Validation_test_archive_check]
+LOG-TIME[DELTA:   0.00004]  MESSAGE:TEST "Archive Check" RESULT: passed
+
+START TEST "Duplicator importer version" [CLASS: DUPX_Validation_test_importer_version]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "Duplicator importer version" RESULT: skip
+
+START TEST "Overwrite Install" [CLASS: DUPX_Validation_test_owrinstall]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Overwrite Install" RESULT: skip
+
+START TEST "Recovery Point" [CLASS: DUPX_Validation_test_recovery]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Recovery Point" RESULT: skip
+
+START TEST "Package is Importable" [CLASS: DUPX_Validation_test_importable]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Package is Importable" RESULT: skip
+
+START TEST "REST API test" [CLASS: DUPX_Validation_test_rest_api]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "REST API test" RESULT: skip
+
+START TEST "Manual extraction detected" [CLASS: DUPX_Validation_test_manual_extraction]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "Manual extraction detected" RESULT: good
+
+START TEST "Database Only" [CLASS: DUPX_Validation_test_dbonly_iswordpress]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Database Only" RESULT: skip
+
+START TEST "Package Age" [CLASS: DUPX_Validation_test_package_age]
+LOG-TIME[DELTA:   0.00003]  MESSAGE:TEST "Package Age" RESULT: good
+
+START TEST "Package Size" [CLASS: DUPX_Validation_test_package_size]
+LOG-TIME[DELTA:   0.00003]  MESSAGE:TEST "Package Size" RESULT: soft warning
+
+START TEST "Replace PATHs in database" [CLASS: DUPX_Validation_test_replace_paths]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Replace PATHs in database" RESULT: skip
+
+START TEST "Managed hosting supported" [CLASS: DUPX_Validation_test_managed_supported]
+LOG-TIME[DELTA:   0.00036]  MESSAGE:TEST "Managed hosting supported" RESULT: skip
+
+START TEST "Siteground" [CLASS: DUPX_Validation_test_siteground]
+LOG-TIME[DELTA:   0.00011]  MESSAGE:TEST "Siteground" RESULT: skip
+
+START TEST "Addon Sites" [CLASS: DUPX_Validation_test_addon_sites]
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+LOG-TIME[DELTA:   0.02294]  MESSAGE:TEST "Addon Sites" RESULT: good
+
+START TEST "Wordfence" [CLASS: DUPX_Validation_test_wordfence]
+LOG-TIME[DELTA:   0.00079]  MESSAGE:TEST "Wordfence" RESULT: good
+
+START TEST "Table prefix of managed hosting" [CLASS: DUPX_Validation_test_managed_tprefix]
+LOG-TIME[DELTA:   0.00038]  MESSAGE:TEST "Table prefix of managed hosting" RESULT: skip
+
+START TEST "PHP Version Mismatch" [CLASS: DUPX_Validation_test_php_version]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "PHP Version Mismatch" RESULT: good
+
+START TEST "PHP Open Base" [CLASS: DUPX_Validation_test_open_basedir]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "PHP Open Base" RESULT: good
+
+START TEST "PHP Memory Limit" [CLASS: DUPX_Validation_test_memory_limit]
+LOG-TIME[DELTA:   0.00004]  MESSAGE:TEST "PHP Memory Limit" RESULT: good
+
+START TEST "PHP Extensions" [CLASS: DUPX_Validation_test_extensions]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "PHP Extensions" RESULT: good
+
+START TEST "PHP Mysqli" [CLASS: DUPX_Validation_test_mysql_connect]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "PHP Mysqli" RESULT: passed
+
+START TEST "PHP Tokenizer" [CLASS: DUPX_Validation_test_tokenizer]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "PHP Tokenizer" RESULT: passed
+
+START TEST "PHP Timeout" [CLASS: DUPX_Validation_test_timeout]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "PHP Timeout" RESULT: good
+
+START TEST "Disk Space" [CLASS: DUPX_Validation_test_disk_space]
+LOG-TIME[DELTA:   0.01027]  MESSAGE:TEST "Disk Space" RESULT: good
+
+START TEST "Permissions: General" [CLASS: DUPX_Validation_test_iswritable]
+LOG-TIME[DELTA:   0.12855]  MESSAGE:TEST "Permissions: General" RESULT: passed
+
+START TEST "Permissions: Configs Files " [CLASS: DUPX_Validation_test_iswritable_configs]
+LOG-TIME[DELTA:   0.00059]  MESSAGE:TEST "Permissions: Configs Files " RESULT: passed
+
+START TEST "Host Name" [CLASS: DUPX_Validation_test_db_host_name]
+LOG-TIME[DELTA:   0.00005]  MESSAGE:TEST "Host Name" RESULT: passed
+
+START TEST "Host Connection" [CLASS: DUPX_Validation_test_db_connection]
+LOG-TIME[DELTA:   0.00037]  MESSAGE:TEST "Host Connection" RESULT: passed
+
+START TEST "Database Version" [CLASS: DUPX_Validation_test_db_version]
+LOG-TIME[DELTA:   0.00135]  MESSAGE:TEST "Database Version" RESULT: soft warning
+
+START TEST "Create New Database" [CLASS: DUPX_Validation_test_db_create]
+LOG-TIME[DELTA:   0.00003]  MESSAGE:TEST "Create New Database" RESULT: skip
+
+START TEST "Database Engine Support" [CLASS: DUPX_Validation_test_db_supported_engine]
+LOG-TIME[DELTA:   0.00022]  MESSAGE:TEST "Database Engine Support" RESULT: passed
+
+START TEST "Database GTID Mode" [CLASS: DUPX_Validation_test_db_gtid_mode]
+LOG-TIME[DELTA:   0.00015]  MESSAGE:TEST "Database GTID Mode" RESULT: passed
+
+START TEST "Privileges: User Visibility" [CLASS: DUPX_Validation_test_db_visibility]
+LOG-TIME[DELTA:   0.00007]  MESSAGE:TEST "Privileges: User Visibility" RESULT: passed
+
+START TEST "Manual Table Check" [CLASS: DUPX_Validation_test_db_manual_tabels_count]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Manual Table Check" RESULT: skip
+
+START TEST "Multiple WordPress Installs" [CLASS: DUPX_Validation_test_db_multiple_wp_installs]
+LOG-TIME[DELTA:   0.00038]  MESSAGE:TEST "Multiple WordPress Installs" RESULT: passed
+
+START TEST "Privileges: User Resources" [CLASS: DUPX_Validation_test_db_user_resources]
+DB QUERY [ERROR][/home/autobusmedinaaza/public_html/dup-installer/classes/database/class.db.php:645] MSG: SELECT command denied to user 'autobusmedinaaza_user'@'localhost' for table `mysql`.`user`
+	SQL: SELECT max_questions, max_updates, max_connections FROM mysql.user WHERE user = 'autobusmedinaaza_user' AND host = 'localhost'
+TRACE[1] CLASS___: DUPX_DB::mysqli_query      FILE: /home/autobusmedinaaza/public_html/dup-installer/classes/validation/class.validation.database.service.php[763]
+TRACE[2] CLASS___: DUPX_Validation_database_service->getUserResources FILE: /home/autobusmedinaaza/public_html/dup-installer/classes/validation/database-tests/class.validation.test.db.user.resources.php[28]
+TRACE[3] CLASS___: DUPX_Validation_test_db_user_resources->runTest FILE: /home/autobusmedinaaza/public_html/dup-installer/classes/validation/class.validation.abstract.item.php[46]
+TRACE[4] CLASS___: DUPX_Validation_abstract_item->test FILE: /home/autobusmedinaaza/public_html/dup-installer/classes/validation/class.validation.manager.php[232]
+TRACE[5] CLASS___: DUPX_Validation_manager->runTests FILE: /home/autobusmedinaaza/public_html/dup-installer/classes/validation/class.validation.manager.php[205]
+TRACE[6] CLASS___: DUPX_Validation_manager->getValidateData FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.ajax.php[173]
+TRACE[7] CLASS___: DUPX_Ctrl_ajax::actions    FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.ajax.php[95]
+TRACE[8] CLASS___: DUPX_Ctrl_ajax::controller FILE: /home/autobusmedinaaza/public_html/dup-installer/main.installer.php[60]
+
+LOG-TIME[DELTA:   0.00019]  MESSAGE:TEST "Privileges: User Resources" RESULT: passed
+
+START TEST "Privileges: User Table Access" [CLASS: DUPX_Validation_test_db_user_perms]
+LOG-TIME[DELTA:   0.06694]  MESSAGE:TEST "Privileges: User Table Access" RESULT: passed
+
+START TEST "Privileges: 'Show Variables' Query" [CLASS: DUPX_Validation_test_db_custom_queries]
+LOG-TIME[DELTA:   0.00061]  MESSAGE:TEST "Privileges: 'Show Variables' Query" RESULT: passed
+
+START TEST "Source Database Triggers" [CLASS: DUPX_Validation_test_db_triggers]
+LOG-TIME[DELTA:   0.00002]  MESSAGE:TEST "Source Database Triggers" RESULT: passed
+
+START TEST "Character Set and Collation Support" [CLASS: DUPX_Validation_test_db_supported_default_charset]
+LOG-TIME[DELTA:   0.00089]  MESSAGE:TEST "Character Set and Collation Support" RESULT: passed
+
+START TEST "Character Set and  Collation Capability" [CLASS: DUPX_Validation_test_db_supported_charset]
+LOG-TIME[DELTA:   0.00009]  MESSAGE:TEST "Character Set and  Collation Capability" RESULT: passed
+
+START TEST "Tables Case Sensitivity" [CLASS: DUPX_Validation_test_db_case_sensitive_tables]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Tables Case Sensitivity" RESULT: skip
+
+START TEST "Tables Flagged for Removal or Backup" [CLASS: DUPX_Validation_test_db_affected_tables]
+LOG-TIME[DELTA:   0.00041]  MESSAGE:TEST "Tables Flagged for Removal or Backup" RESULT: passed
+
+START TEST "Prefix too long" [CLASS: DUPX_Validation_test_db_prefix_too_long]
+LOG-TIME[DELTA:   0.00018]  MESSAGE:TEST "Prefix too long" RESULT: passed
+
+START TEST "Database cleanup" [CLASS: DUPX_Validation_test_db_cleanup]
+LOG-TIME[DELTA:   0.00001]  MESSAGE:TEST "Database cleanup" RESULT: skip
+
+
+CTRL PARAMS AFTER VALIDATION
+AJAX ACTION [validate] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [proceed_confirm_dialog] START
+AJAX ACTION [proceed_confirm_dialog] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [sparam_s1] START
+AJAX ACTION [sparam_s1] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+INITIALIZE FILTERS
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+********************************************************************************
+* DUPLICATOR LITE: Install-Log
+* STEP-1 START @ 12:53:01
+* NOTICE: Do NOT post to public sites or forums!!
+********************************************************************************
+USER INPUTS
+INSTALL TYPE________: restore single site
+BLOG NAME___________: "AUTOCARES BRAVO"
+HOME URL NEW________: "https://autobusmedinaazahara.com"
+SITE URL NEW________: "https://autobusmedinaazahara.com"
+CONTENT URL NEW_____: "https://autobusmedinaazahara.com/wp-content"
+UPLOAD URL NEW______: "https://autobusmedinaazahara.com/wp-content/uploads"
+PLUGINS URL NEW_____: "https://autobusmedinaazahara.com/wp-content/plugins"
+MUPLUGINS URL NEW___: "https://autobusmedinaazahara.com/wp-content/mu-plugins"
+HOME PATH NEW_______: "/home/autobusmedinaaza/public_html"
+SITE PATH NEW_______: "/home/autobusmedinaaza/public_html"
+CONTENT PATH NEW____: "/home/autobusmedinaaza/public_html/wp-content"
+UPLOAD PATH NEW_____: "/home/autobusmedinaaza/public_html/wp-content/uploads"
+PLUGINS PATH NEW____: "/home/autobusmedinaaza/public_html/wp-content/plugins"
+MUPLUGINS PATH NEW__: "/home/autobusmedinaaza/public_html/wp-content/mu-plugins"
+ARCHIVE ACTION______: "removewpfiles"
+SKIP WP FILES_______: "none"
+ARCHIVE ENGINE______: "ziparchivechunking"
+SET DIR PERMS_______: true
+DIR PERMS VALUE_____: 0755
+SET FILE PERMS______: true
+FILE PERMS VALUE____: 0644
+SAFE MODE___________: 0
+LOGGING_____________: 1
+ZIP THROTTLING______: false
+WP CONFIG___________: "modify"
+HTACCESS CONFIG_____: "original"
+OTHER CONFIG________: "original"
+FILE TIME___________: "current"
+********************************************************************************
+
+REMOVE FILTERS
+	DIR : "/home/autobusmedinaaza/public_html/dup-installer"
+	FILE: "/home/autobusmedinaaza/public_html/ult3_[HASH]_20251106121014_installer-backup.php"
+	FILE: "/home/autobusmedinaaza/public_html/ult3_[HASH]_20251106121014_archive.zip"
+	FILE: "/home/autobusmedinaaza/public_html/installer.php"
+	FILE: "/home/autobusmedinaaza/public_html/dup-installer-bootlog__c4fd236-06121014.txt"
+EXTRACTION FILTERS
+	DIR : "dup-installer"
+	FILE: "ult3_[HASH]_20251106121014_installer-backup.php"
+--------------------------------------
+
+
+EXTRACTION: ZIP CHUNKING >>> START
+MAINTENANCE MODE ENABLE
+BEFORE EXTRACION ACTIONS
+
+*** RESET CONFIG FILES IN CURRENT HOSTING >>> START
+
+*** RESET CONFIG FILES IN CURRENT HOSTING >>> END
+REMOVE WP FILES
+LOG-TIME RESET TIME
+REMOVE FILES
+REMOVE FOLDER "/home/autobusmedinaaza/public_html/wp-content"
+REMOVE FOLDER "/home/autobusmedinaaza/public_html/wp-content/uploads"
+REMOVE FOLDER "/home/autobusmedinaaza/public_html/wp-content/plugins"
+REMOVE FOLDER "/home/autobusmedinaaza/public_html/wp-content/mu-plugins"
+LOG-TIME[DELTA:   0.00271]  MESSAGE:FOLDERS REMOVED
+MAINTENANCE MODE ENABLE
+
+*** CREATE FOLDER AND PERMISSION PREPARE
+FOLDER PREPARE DONE
+ARCHIVE OFFSET 0
+CHUNK COMPLETE - RUNTIME: 24.9298 sec. - Files processed: 4,235 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 4235
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+CHUNK COMPLETE - RUNTIME: 5.0037 sec. - Files processed: 6,160 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 6160
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+CHUNK COMPLETE - RUNTIME: 5.8535 sec. - Files processed: 6,726 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 6726
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+CHUNK COMPLETE - RUNTIME: 5.0101 sec. - Files processed: 7,103 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 7103
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+CHUNK COMPLETE - RUNTIME: 5.0087 sec. - Files processed: 9,567 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 9567
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+CHUNK COMPLETE - RUNTIME: 5.0103 sec. - Files processed: 11,640 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 11640
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+CHUNK COMPLETE - RUNTIME: 5.0052 sec. - Files processed: 15,207 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [extract] START
+MAINTENANCE MODE ENABLE
+ARCHIVE OFFSET 15207
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+FILE EXTRACTION: done processing last file in list of 16109
+
+EXTRACTION: ZIP CHUNKING >>> DONE
+
+EXTRACTION COMPLETE @ 12:53:59 - RUNTIME: 57.7312 sec. - Files processed: 15,503 of 15,503
+AJAX ACTION [extract] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [dbinstall] START
+
+
+
+********************************************************************************
+* DUPLICATOR LITE: INSTALL-LOG
+* STEP-2 START @ 12:53:59
+* NOTICE: Do NOT post to public sites or forums!!
+********************************************************************************
+USER INPUTS
+DB ENGINE___________: "chunk"
+VIEW MODE___________: "basic"
+DB ACTION___________: "empty"
+DB HOST_____________: "**OBSCURED**"
+DB NAME_____________: "**OBSCURED**"
+DB PASS_____________: "**OBSCURED**"
+DB PORT_____________: "**OBSCURED**"
+USER MODE___________: "overwrite"
+TABLE PREFIX________: "wp_"
+MYSQL MODE__________: "DEFAULT"
+MYSQL MODE OPTS_____: ""
+CHARSET_____________: "utf8mb4"
+COLLATE_____________: ""
+CUNKING_____________: true
+VIEW CREATION_______: true
+STORED PROCEDURE____: true
+FUNCTIONS___________: true
+REMOVE DEFINER______: false
+SPLIT CREATES_______: true
+--------------------------------------
+TABLES
+--------------------------------------
+TABLE "wp_actionscheduler_actions"______________________[ROWS:      83] [EXTRACT|REPLACE] [INST NAME: wp_actionscheduler_actions]
+TABLE "wp_actionscheduler_claims"_______________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_actionscheduler_claims]
+TABLE "wp_actionscheduler_groups"_______________________[ROWS:       5] [EXTRACT|REPLACE] [INST NAME: wp_actionscheduler_groups]
+TABLE "wp_actionscheduler_logs"_________________________[ROWS:     252] [EXTRACT|REPLACE] [INST NAME: wp_actionscheduler_logs]
+TABLE "wp_cmplz_cookiebanners"__________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_cmplz_cookiebanners]
+TABLE "wp_cmplz_cookies"________________________________[ROWS:      40] [EXTRACT|REPLACE] [INST NAME: wp_cmplz_cookies]
+TABLE "wp_cmplz_dnsmpd"_________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_cmplz_dnsmpd]
+TABLE "wp_cmplz_services"_______________________________[ROWS:      16] [EXTRACT|REPLACE] [INST NAME: wp_cmplz_services]
+TABLE "wp_commentmeta"__________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_commentmeta]
+TABLE "wp_comments"_____________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_comments]
+TABLE "wp_duplicator_packages"__________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_duplicator_packages]
+TABLE "wp_links"________________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_links]
+TABLE "wp_litespeed_url"________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_litespeed_url]
+TABLE "wp_litespeed_url_file"___________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_litespeed_url_file]
+TABLE "wp_options"______________________________________[ROWS:    2044] [EXTRACT|REPLACE] [INST NAME: wp_options]
+TABLE "wp_postmeta"_____________________________________[ROWS:     459] [EXTRACT|REPLACE] [INST NAME: wp_postmeta]
+TABLE "wp_posts"________________________________________[ROWS:     303] [EXTRACT|REPLACE] [INST NAME: wp_posts]
+TABLE "wp_rank_math_analytics_objects"__________________[ROWS:      12] [EXTRACT|REPLACE] [INST NAME: wp_rank_math_analytics_objects]
+TABLE "wp_rank_math_internal_links"_____________________[ROWS:      33] [EXTRACT|REPLACE] [INST NAME: wp_rank_math_internal_links]
+TABLE "wp_rank_math_internal_meta"______________________[ROWS:      21] [EXTRACT|REPLACE] [INST NAME: wp_rank_math_internal_meta]
+TABLE "wp_reservas_agencies"____________________________[ROWS:      14] [EXTRACT|REPLACE] [INST NAME: wp_reservas_agencies]
+TABLE "wp_reservas_agency_horarios_disabled"____________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_reservas_agency_horarios_disabled]
+TABLE "wp_reservas_agency_services"_____________________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_reservas_agency_services]
+TABLE "wp_reservas_configuration"_______________________[ROWS:      38] [EXTRACT|REPLACE] [INST NAME: wp_reservas_configuration]
+TABLE "wp_reservas_discount_rules"______________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_reservas_discount_rules]
+TABLE "wp_reservas_pending_orders"______________________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_reservas_pending_orders]
+TABLE "wp_reservas_rapidas"_____________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_reservas_rapidas]
+TABLE "wp_reservas_reservas"____________________________[ROWS:    2734] [EXTRACT|REPLACE] [INST NAME: wp_reservas_reservas]
+TABLE "wp_reservas_servicios"___________________________[ROWS:     314] [EXTRACT|REPLACE] [INST NAME: wp_reservas_servicios]
+TABLE "wp_reservas_users"_______________________________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_reservas_users]
+TABLE "wp_reservas_visitas"_____________________________[ROWS:      30] [EXTRACT|REPLACE] [INST NAME: wp_reservas_visitas]
+TABLE "wp_termmeta"_____________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_termmeta]
+TABLE "wp_terms"________________________________________[ROWS:      16] [EXTRACT|REPLACE] [INST NAME: wp_terms]
+TABLE "wp_term_relationships"___________________________[ROWS:       3] [EXTRACT|REPLACE] [INST NAME: wp_term_relationships]
+TABLE "wp_term_taxonomy"________________________________[ROWS:      16] [EXTRACT|REPLACE] [INST NAME: wp_term_taxonomy]
+TABLE "wp_usermeta"_____________________________________[ROWS:      37] [EXTRACT|REPLACE] [INST NAME: wp_usermeta]
+TABLE "wp_users"________________________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_users]
+TABLE "wp_wc_admin_notes"_______________________________[ROWS:      65] [EXTRACT|REPLACE] [INST NAME: wp_wc_admin_notes]
+TABLE "wp_wc_admin_note_actions"________________________[ROWS:      93] [EXTRACT|REPLACE] [INST NAME: wp_wc_admin_note_actions]
+TABLE "wp_wc_category_lookup"___________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_wc_category_lookup]
+TABLE "wp_wc_customer_lookup"___________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_customer_lookup]
+TABLE "wp_wc_download_log"______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_download_log]
+TABLE "wp_wc_orders"____________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_orders]
+TABLE "wp_wc_orders_meta"_______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_orders_meta]
+TABLE "wp_wc_order_addresses"___________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_order_addresses]
+TABLE "wp_wc_order_coupon_lookup"_______________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_order_coupon_lookup]
+TABLE "wp_wc_order_operational_data"____________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_order_operational_data]
+TABLE "wp_wc_order_product_lookup"______________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_order_product_lookup]
+TABLE "wp_wc_order_stats"_______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_order_stats]
+TABLE "wp_wc_order_tax_lookup"__________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_order_tax_lookup]
+TABLE "wp_wc_product_attributes_lookup"_________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_product_attributes_lookup]
+TABLE "wp_wc_product_download_directories"______________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_wc_product_download_directories]
+TABLE "wp_wc_product_meta_lookup"_______________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_product_meta_lookup]
+TABLE "wp_wc_rate_limits"_______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_rate_limits]
+TABLE "wp_wc_reserved_stock"____________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_reserved_stock]
+TABLE "wp_wc_tax_rate_classes"__________________________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_wc_tax_rate_classes]
+TABLE "wp_wc_webhooks"__________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wc_webhooks]
+TABLE "wp_wfauditevents"________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfauditevents]
+TABLE "wp_wfblockediplog"_______________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_wfblockediplog]
+TABLE "wp_wfblocks7"____________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfblocks7]
+TABLE "wp_wfconfig"_____________________________________[ROWS:     281] [EXTRACT|REPLACE] [INST NAME: wp_wfconfig]
+TABLE "wp_wfcrawlers"___________________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_wfcrawlers]
+TABLE "wp_wffilechanges"________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wffilechanges]
+TABLE "wp_wffilemods"___________________________________[ROWS:   10883] [EXTRACT|REPLACE] [INST NAME: wp_wffilemods]
+TABLE "wp_wfhits"_______________________________________[ROWS:      24] [EXTRACT|REPLACE] [INST NAME: wp_wfhits]
+TABLE "wp_wfhoover"_____________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfhoover]
+TABLE "wp_wfissues"_____________________________________[ROWS:      11] [EXTRACT|REPLACE] [INST NAME: wp_wfissues]
+TABLE "wp_wfknownfilelist"______________________________[ROWS:   10884] [EXTRACT|REPLACE] [INST NAME: wp_wfknownfilelist]
+TABLE "wp_wflivetraffichuman"___________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wflivetraffichuman]
+TABLE "wp_wflocs"_______________________________________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_wflocs]
+TABLE "wp_wflogins"_____________________________________[ROWS:      57] [EXTRACT|REPLACE] [INST NAME: wp_wflogins]
+TABLE "wp_wfls_2fa_secrets"_____________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfls_2fa_secrets]
+TABLE "wp_wfls_role_counts"_____________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfls_role_counts]
+TABLE "wp_wfls_settings"________________________________[ROWS:      30] [EXTRACT|REPLACE] [INST NAME: wp_wfls_settings]
+TABLE "wp_wfnotifications"______________________________[ROWS:       3] [EXTRACT|REPLACE] [INST NAME: wp_wfnotifications]
+TABLE "wp_wfpendingissues"______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfpendingissues]
+TABLE "wp_wfreversecache"_______________________________[ROWS:       3] [EXTRACT|REPLACE] [INST NAME: wp_wfreversecache]
+TABLE "wp_wfsecurityevents"_____________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfsecurityevents]
+TABLE "wp_wfsnipcache"__________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfsnipcache]
+TABLE "wp_wfstatus"_____________________________________[ROWS:     939] [EXTRACT|REPLACE] [INST NAME: wp_wfstatus]
+TABLE "wp_wftrafficrates"_______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wftrafficrates]
+TABLE "wp_wfwaffailures"________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wfwaffailures]
+TABLE "wp_woocommerce_api_keys"_________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_api_keys]
+TABLE "wp_woocommerce_attribute_taxonomies"_____________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_attribute_taxonomies]
+TABLE "wp_woocommerce_downloadable_product_permissions"_[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_downloadable_product_permissions]
+TABLE "wp_woocommerce_log"______________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_log]
+TABLE "wp_woocommerce_order_itemmeta"___________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_order_itemmeta]
+TABLE "wp_woocommerce_order_items"______________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_order_items]
+TABLE "wp_woocommerce_payment_tokenmeta"________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_payment_tokenmeta]
+TABLE "wp_woocommerce_payment_tokens"___________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_payment_tokens]
+TABLE "wp_woocommerce_sessions"_________________________[ROWS:       1] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_sessions]
+TABLE "wp_woocommerce_shipping_zones"___________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_shipping_zones]
+TABLE "wp_woocommerce_shipping_zone_locations"__________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_shipping_zone_locations]
+TABLE "wp_woocommerce_shipping_zone_methods"____________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_shipping_zone_methods]
+TABLE "wp_woocommerce_tax_rates"________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_tax_rates]
+TABLE "wp_woocommerce_tax_rate_locations"_______________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_woocommerce_tax_rate_locations]
+TABLE "wp_wpfm_backup"__________________________________[ROWS:       0] [EXTRACT|REPLACE] [INST NAME: wp_wpfm_backup]
+TABLE "wp_wpmailsmtp_debug_events"______________________[ROWS:      11] [EXTRACT|REPLACE] [INST NAME: wp_wpmailsmtp_debug_events]
+TABLE "wp_wpmailsmtp_tasks_meta"________________________[ROWS:       2] [EXTRACT|REPLACE] [INST NAME: wp_wpmailsmtp_tasks_meta]
+********************************************************************************
+
+--------------------------------------
+DATABASE-ENVIRONMENT
+--------------------------------------
+MYSQL VERSION:	This Server: 10.6.23 -- Build Server: 11.4.8
+FILE SIZE:	dup-database__[HASH].sql (11.13MB)
+TIMEOUT:	5000
+MAXPACK:	1073741824
+SQLMODE-GLOBAL:	
+SQLMODE-SESSION:NO_AUTO_VALUE_ON_ZERO
+DROP ALL TABLES
+--------------------------------------
+DATABASE RESULTS
+--------------------------------------
+NO GENERAL QUERY FIXES
+--------------------------------------
+** DATABASE CHUNK install start
+--------------------------------------
+DATABASE CHUNK SEEK POSITION: 0
+Auto Commit set to false successfully
+NO TABLE TO SKIP
+DB QUERY [ERROR][/home/autobusmedinaaza/public_html/dup-installer/classes/database/class.db.php:645] MSG: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'mysqldump: Deprecated program name. It will be removed in a future release, u...' at line 3
+	SQL: /* DUPLICATOR-LITE (MYSQL-DUMP BUILD MODE) MYSQL SCRIPT CREATED ON : 2025-11-06 12:10:18 */
+
+mysqldump: Deprecated program name. It will be removed in a future release, use '/usr/bin/mariadb-dump' instead
+/*M!999999\- enable the sandbox mode */ 
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+TRACE[1] CLASS___: DUPX_DB::mysqli_query      FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[1087]
+TRACE[2] CLASS___: DUPX_DBInstall->writeQueryInDB FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[742]
+TRACE[3] CLASS___: DUPX_DBInstall->deployDatabaseChunkMode FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[270]
+TRACE[4] CLASS___: DUPX_DBInstall->insertDatabase FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[244]
+TRACE[5] CLASS___: DUPX_DBInstall->deploy     FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.ajax.php[217]
+TRACE[6] CLASS___: DUPX_Ctrl_ajax::actions    FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.ajax.php[95]
+TRACE[7] CLASS___: DUPX_Ctrl_ajax::controller FILE: /home/autobusmedinaaza/public_html/dup-installer/main.installer.php[60]
+
+DB QUERY [ERROR][/home/autobusmedinaaza/public_html/dup-installer/classes/database/class.db.php:645] MSG: Variable 'time_zone' can't be set to the value of 'NULL'
+	SQL: /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+TRACE[1] CLASS___: DUPX_DB::mysqli_query      FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[1087]
+TRACE[2] CLASS___: DUPX_DBInstall->writeQueryInDB FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[742]
+TRACE[3] CLASS___: DUPX_DBInstall->deployDatabaseChunkMode FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[270]
+TRACE[4] CLASS___: DUPX_DBInstall->insertDatabase FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.dbinstall.php[244]
+TRACE[5] CLASS___: DUPX_DBInstall->deploy     FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.ajax.php[217]
+TRACE[6] CLASS___: DUPX_Ctrl_ajax::actions    FILE: /home/autobusmedinaaza/public_html/dup-installer/ctrls/classes/class.ctrl.ajax.php[95]
+TRACE[7] CLASS___: DUPX_Ctrl_ajax::controller FILE: /home/autobusmedinaaza/public_html/dup-installer/main.installer.php[60]
+
+Auto Commit set to true successfully
+--------------------------------------
+** DATABASE CHUNK install end
+--------------------------------------
+ERRORS FOUND:	2
+DROPPED TABLES:	0
+RENAMED TABLES:	0
+QUERIES RAN:	856
+
+TABLES ROWS IN DATABASE AFTER EXTRACTION
+
+TABLE "wp_actionscheduler_actions"______________________[ROWS:    83]
+TABLE "wp_actionscheduler_claims"_______________________[ROWS:     0]
+TABLE "wp_actionscheduler_groups"_______________________[ROWS:     5]
+TABLE "wp_actionscheduler_logs"_________________________[ROWS:   252]
+TABLE "wp_cmplz_cookiebanners"__________________________[ROWS:     1]
+TABLE "wp_cmplz_cookies"________________________________[ROWS:    40]
+TABLE "wp_cmplz_dnsmpd"_________________________________[ROWS:     0]
+TABLE "wp_cmplz_services"_______________________________[ROWS:    16]
+TABLE "wp_commentmeta"__________________________________[ROWS:     0]
+TABLE "wp_comments"_____________________________________[ROWS:     0]
+TABLE "wp_duplicator_packages"__________________________[ROWS:     1]
+TABLE "wp_links"________________________________________[ROWS:     0]
+TABLE "wp_litespeed_url"________________________________[ROWS:     0]
+TABLE "wp_litespeed_url_file"___________________________[ROWS:     0]
+TABLE "wp_options"______________________________________[ROWS:  2045]
+TABLE "wp_postmeta"_____________________________________[ROWS:   459]
+TABLE "wp_posts"________________________________________[ROWS:   303]
+TABLE "wp_rank_math_analytics_objects"__________________[ROWS:    12]
+TABLE "wp_rank_math_internal_links"_____________________[ROWS:    33]
+TABLE "wp_rank_math_internal_meta"______________________[ROWS:    21]
+TABLE "wp_reservas_agencies"____________________________[ROWS:    14]
+TABLE "wp_reservas_agency_horarios_disabled"____________[ROWS:     0]
+TABLE "wp_reservas_agency_services"_____________________[ROWS:     2]
+TABLE "wp_reservas_configuration"_______________________[ROWS:    38]
+TABLE "wp_reservas_discount_rules"______________________[ROWS:     1]
+TABLE "wp_reservas_pending_orders"______________________[ROWS:     2]
+TABLE "wp_reservas_rapidas"_____________________________[ROWS:     0]
+TABLE "wp_reservas_reservas"____________________________[ROWS:  2734]
+TABLE "wp_reservas_servicios"___________________________[ROWS:   314]
+TABLE "wp_reservas_users"_______________________________[ROWS:     2]
+TABLE "wp_reservas_visitas"_____________________________[ROWS:    30]
+TABLE "wp_term_relationships"___________________________[ROWS:     3]
+TABLE "wp_term_taxonomy"________________________________[ROWS:    16]
+TABLE "wp_termmeta"_____________________________________[ROWS:     0]
+TABLE "wp_terms"________________________________________[ROWS:    16]
+TABLE "wp_usermeta"_____________________________________[ROWS:    37]
+TABLE "wp_users"________________________________________[ROWS:     1]
+TABLE "wp_wc_admin_note_actions"________________________[ROWS:    93]
+TABLE "wp_wc_admin_notes"_______________________________[ROWS:    65]
+TABLE "wp_wc_category_lookup"___________________________[ROWS:     1]
+TABLE "wp_wc_customer_lookup"___________________________[ROWS:     0]
+TABLE "wp_wc_download_log"______________________________[ROWS:     0]
+TABLE "wp_wc_order_addresses"___________________________[ROWS:     0]
+TABLE "wp_wc_order_coupon_lookup"_______________________[ROWS:     0]
+TABLE "wp_wc_order_operational_data"____________________[ROWS:     0]
+TABLE "wp_wc_order_product_lookup"______________________[ROWS:     0]
+TABLE "wp_wc_order_stats"_______________________________[ROWS:     0]
+TABLE "wp_wc_order_tax_lookup"__________________________[ROWS:     0]
+TABLE "wp_wc_orders"____________________________________[ROWS:     0]
+TABLE "wp_wc_orders_meta"_______________________________[ROWS:     0]
+TABLE "wp_wc_product_attributes_lookup"_________________[ROWS:     0]
+TABLE "wp_wc_product_download_directories"______________[ROWS:     2]
+TABLE "wp_wc_product_meta_lookup"_______________________[ROWS:     0]
+TABLE "wp_wc_rate_limits"_______________________________[ROWS:     0]
+TABLE "wp_wc_reserved_stock"____________________________[ROWS:     0]
+TABLE "wp_wc_tax_rate_classes"__________________________[ROWS:     2]
+TABLE "wp_wc_webhooks"__________________________________[ROWS:     0]
+TABLE "wp_wfauditevents"________________________________[ROWS:     0]
+TABLE "wp_wfblockediplog"_______________________________[ROWS:     1]
+TABLE "wp_wfblocks7"____________________________________[ROWS:     0]
+TABLE "wp_wfconfig"_____________________________________[ROWS:   281]
+TABLE "wp_wfcrawlers"___________________________________[ROWS:     1]
+TABLE "wp_wffilechanges"________________________________[ROWS:     0]
+TABLE "wp_wffilemods"___________________________________[ROWS: 10883]
+TABLE "wp_wfhits"_______________________________________[ROWS:    24]
+TABLE "wp_wfhoover"_____________________________________[ROWS:     0]
+TABLE "wp_wfissues"_____________________________________[ROWS:    11]
+TABLE "wp_wfknownfilelist"______________________________[ROWS: 10884]
+TABLE "wp_wflivetraffichuman"___________________________[ROWS:     0]
+TABLE "wp_wflocs"_______________________________________[ROWS:     2]
+TABLE "wp_wflogins"_____________________________________[ROWS:    57]
+TABLE "wp_wfls_2fa_secrets"_____________________________[ROWS:     0]
+TABLE "wp_wfls_role_counts"_____________________________[ROWS:     0]
+TABLE "wp_wfls_settings"________________________________[ROWS:    30]
+TABLE "wp_wfnotifications"______________________________[ROWS:     3]
+TABLE "wp_wfpendingissues"______________________________[ROWS:     0]
+TABLE "wp_wfreversecache"_______________________________[ROWS:     3]
+TABLE "wp_wfsecurityevents"_____________________________[ROWS:     0]
+TABLE "wp_wfsnipcache"__________________________________[ROWS:     0]
+TABLE "wp_wfstatus"_____________________________________[ROWS:   939]
+TABLE "wp_wftrafficrates"_______________________________[ROWS:     0]
+TABLE "wp_wfwaffailures"________________________________[ROWS:     0]
+TABLE "wp_woocommerce_api_keys"_________________________[ROWS:     0]
+TABLE "wp_woocommerce_attribute_taxonomies"_____________[ROWS:     0]
+TABLE "wp_woocommerce_downloadable_product_permissions"_[ROWS:     0]
+TABLE "wp_woocommerce_log"______________________________[ROWS:     0]
+TABLE "wp_woocommerce_order_itemmeta"___________________[ROWS:     0]
+TABLE "wp_woocommerce_order_items"______________________[ROWS:     0]
+TABLE "wp_woocommerce_payment_tokenmeta"________________[ROWS:     0]
+TABLE "wp_woocommerce_payment_tokens"___________________[ROWS:     0]
+TABLE "wp_woocommerce_sessions"_________________________[ROWS:     1]
+TABLE "wp_woocommerce_shipping_zone_locations"__________[ROWS:     0]
+TABLE "wp_woocommerce_shipping_zone_methods"____________[ROWS:     0]
+TABLE "wp_woocommerce_shipping_zones"___________________[ROWS:     0]
+TABLE "wp_woocommerce_tax_rate_locations"_______________[ROWS:     0]
+TABLE "wp_woocommerce_tax_rates"________________________[ROWS:     0]
+TABLE "wp_wpfm_backup"__________________________________[ROWS:     0]
+TABLE "wp_wpmailsmtp_debug_events"______________________[ROWS:    11]
+TABLE "wp_wpmailsmtp_tasks_meta"________________________[ROWS:     2]
+
+INSERT DATA RUNTIME: 7.8004 sec.
+STEP-2 COMPLETE @ 12:54:07 - RUNTIME: 7.8005 sec.
+AJAX ACTION [dbinstall] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [webupdate] START
+
+
+********************************************************************************
+DUPLICATOR LITE: INSTALL-LOG
+STEP-3 START @ 12:54:07
+NOTICE: Do NOT post to public sites or forums
+********************************************************************************
+CHARSET SERVER:	"utf8mb4"
+CHARSET CLIENT:	"utf8mb4"
+********************************************************************************
+OPTIONS:
+SKIP PATH REPLACE_____: false
+DISALLOW_FILE_EDIT____: [value = ], [inWpConfig = ]
+DISALLOW_FILE_MODS____: [value = ], [inWpConfig = ]
+AUTOSAVE_INTERVAL_____: [value = 60], [inWpConfig = ]
+WP_POST_REVISIONS_____: [value = 1], [inWpConfig = ]
+FORCE_SSL_ADMIN_______: [value = 1], [inWpConfig = ]
+WP_AUTO_UPDATE_CORE___: [value = false], [inWpConfig = ]
+WP_CACHE______________: [value = 1], [inWpConfig = 1]
+WPCACHEHOME___________: [value = /], [inWpConfig = ]
+WP_DEBUG______________: [value = 1], [inWpConfig = 1]
+WP_DEBUG_LOG__________: [value = 1], [inWpConfig = 1]
+WP_DEBUG_DISPLAY______: [value = ], [inWpConfig = 1]
+WP_DISABLE_FATAL_ERROR_HANDLER: [value = ], [inWpConfig = ]
+SCRIPT_DEBUG__________: [value = 1], [inWpConfig = 1]
+CONCATENATE_SCRIPTS___: [value = ], [inWpConfig = ]
+SAVEQUERIES___________: [value = ], [inWpConfig = ]
+ALTERNATE_WP_CRON_____: [value = ], [inWpConfig = ]
+DISABLE_WP_CRON_______: [value = ], [inWpConfig = ]
+WP_CRON_LOCK_TIMEOUT__: [value = 60], [inWpConfig = ]
+COOKIE_DOMAIN_________: [value = ], [inWpConfig = ]
+WP_MEMORY_LIMIT_______: [value = 256M], [inWpConfig = 1]
+WP_MAX_MEMORY_LIMIT___: [value = 512M], [inWpConfig = ]
+WP_TEMP_DIR___________: [value = ], [inWpConfig = ]
+********************************************************************************
+
+REMOVE CURRENT PACKAGE IN BACKUP
+CLEANUP CURRENT PACKAGE STATUS ID 12
+
+====================================
+REMOVE MAINTENANCE MODE
+====================================
+MAINTENANCE MODE DISABLE
+SET CONFIG FILES
+Retained original entry wpconfig target:/home/autobusmedinaaza/public_html/wp-config.php
+Retained original entry htaccess target:/home/autobusmedinaaza/public_html/.htaccess
+
+====================================
+CONFIGURATION FILE UPDATES
+====================================
+	UPDATE ABSPATH "__DIR__ . '/'"
+	UPDATE WP_HOME "https://autobusmedinaazahara.com"
+	UPDATE WP_SITEURL "https://autobusmedinaazahara.com"
+	UPDATE DB_NAME ""autobusmedinaaza_admin""
+	UPDATE DB_USER "** OBSCURED **"
+	UPDATE DB_PASSWORD "** OBSCURED **"
+	UPDATE DB_HOST ""localhost""
+	UPDATE DB_CHARSET "utf8mb4"
+	UPDATE DB_COLLATE ""
+	
+RESTORE BACKUP MODE: SKIP OTHER WP-CONFIGS UPDATE ***
+
+====================================
+HTACCESS UPDATE
+====================================
+
+WEB SERVER CONFIGURATION FILE UPDATED:
+RESET ALL USERS SESSION TOKENS
+MIGRATION INFO SET
+
+====================================
+CHECK FOR INDEX.HTML
+====================================
+NO INDEX.HTML WAS FOUND
+
+====================================
+NOTICES TEST
+====================================
+No General Notices Found
+
+
+====================================
+CLEANUP TMP FILES
+====================================
+
+====================================
+SET PARAMS PERMISSION
+====================================
+
+*** SET FOLDER PERMISSION AFTER EXTRACTION
+--------------------------------------
+PATHS MAPPING : "/home/autobusmedinaaza/public_html"
+--------------------------------------
+SET FOLDER PERMISSION DONE
+
+====================================
+FINAL REPORT NOTICES
+====================================
+
+STEP-3 COMPLETE @ 12:54:07 - RUNTIME: 0.1132 sec. 
+
+
+AJAX ACTION [webupdate] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [finalpre] START
+AJAX ACTION [finalpre] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+-------------------------
+AJAX ACTION [finalafter] START
+AJAX ACTION [finalafter] SUCCESS
+-------------------------
+
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/src/Core/Bootstrap.php:71] RESET TIME
+
+====================================
+NEXT STEP NOTICES
+====================================
+-----------------------
+[WARNING] DATABASE ERROR: database error write
+	LONG MSG: DATABASE ERROR: 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'mysqldump: Deprecated program name. It will be removed in a future release, u...' at line 3'
+	[SQL=/* DUPLICATOR-LITE (MYSQL-DUMP BUILD MODE) MYSQL SCRIPT CREATED ON : 2025-11-06 12:10:18 */
+mysqldump: Deprecated program name. It will be removed in a future release, use '/usr/bin/mariadb-dump' ins...]
+DATABASE ERROR: 'Variable 'time_zone' can't be set to the value of 'NULL''
+	[SQL=/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;...]
+
+
+====================================
+
+====================================
+FINAL REPORT NOTICES LIST
+====================================
+-----------------------
+[WARNING] DB EXTRACTION - INSTALL NOTICES (2)
+	SECTIONS: database
+	LONG MSG: Queries that error during the deploy step are logged to the         installer-log.txt
+                installer-log.txt
+         file and
+marked with an **ERROR** status.   If you experience a few errors (under 5), in many cases they can be ignored as long as your site is working correctly.
+However if you see a large amount of errors or you experience an issue with your site then the error messages in the log file will need to be investigated.
+COMMON FIXES:
+        Unknown collation: See Online FAQ:
+        What is Compatibility mode & 'Unknown collation' errors?
+        Query Limits: Update MySQL server with the max_allowed_packet
+        setting for larger payloads.
+
+
+-----------------------
+[WARNING] DATABASE ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'mysqldump: Deprecated program name. It will be removed in a future release, u...' at line 3
+	SECTIONS: database
+	LONG MSG: DATABASE ERROR: 'You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'mysqldump: Deprecated program name. It will be removed in a future release, u...' at line 3'
+	[SQL=/* DUPLICATOR-LITE (MYSQL-DUMP BUILD MODE) MYSQL SCRIPT CREATED ON : 2025-11-06 12:10:18 */
+mysqldump: Deprecated program name. It will be removed in a future release, use '/usr/bin/mariadb-dump' ins...]
+
+
+-----------------------
+[WARNING] DATABASE ERROR: Variable 'time_zone' can't be set to the value of 'NULL'
+	SECTIONS: database
+	LONG MSG: DATABASE ERROR: 'Variable 'time_zone' can't be set to the value of 'NULL''
+	[SQL=/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;...]
+
+
+-----------------------
+[NOTICE] Warnings or notices on WordPress front-end tests!
+	SECTIONS: general
+	LONG MSG: SCRIPT FILE TEST: /home/autobusmedinaaza/public_html/index.php
+E_USER_NOTICE Function _load_textdomain_just_in_time was called incorrectly. Translation loading for the acf domain was triggered too early. This is usually an indicator for some code in the plugin or theme running too early. Translations should be loaded at the init action or later. Please see Debugging in WordPress for more information. (This message was added in version 6.7.0.)
+	FILE: /home/autobusmedinaaza/public_html/wp-includes/functions.php[6121]
+	--- TRACE ---
+	FUNCTION: trigger_error                 FILE: /home/autobusmedinaaza/public_html/wp-includes/functions.php[6121]
+	FUNCTION: wp_trigger_error              FILE: /home/autobusmedinaaza/public_html/wp-includes/functions.php[6061]
+	FUNCTION: _doing_it_wrong               FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[1379]
+	FUNCTION: _load_textdomain_just_in_time FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[1409]
+	FUNCTION: get_translations_for_domain   FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[195]
+	FUNCTION: translate                     FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[307]
+	FUNCTION: __                            FILE: /home/autobusmedinaaza/public_html/wp-content/plugins/advanced-custom-fields-pro/acf.php[94]
+	CLASS___: ACF->initialize               FILE: /home/autobusmedinaaza/public_html/wp-content/plugins/advanced-custom-fields-pro/acf.php[780]
+	FUNCTION: acf                           FILE: /home/autobusmedinaaza/public_html/wp-content/plugins/advanced-custom-fields-pro/acf.php[786]
+	FUNCTION: include_once                  FILE: /home/autobusmedinaaza/public_html/wp-settings.php[545]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-config.php[120]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-load.php[50]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-blog-header.php[13]
+	FUNCTION: require                       FILE: /home/autobusmedinaaza/public_html/index.php[17]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-content/wp_test_script_c4fd236-06121014.php[117]
+-----
+For solutions to these issues see the online FAQs 
+https://duplicator.com/knowledge-base/ 
+
+
+-----------------------
+[NOTICE] Warnings or notices on WordPress backend tests!
+	SECTIONS: general
+	LONG MSG: SCRIPT FILE TEST: /home/autobusmedinaaza/public_html/wp-login.php
+E_USER_NOTICE Function _load_textdomain_just_in_time was called incorrectly. Translation loading for the acf domain was triggered too early. This is usually an indicator for some code in the plugin or theme running too early. Translations should be loaded at the init action or later. Please see Debugging in WordPress for more information. (This message was added in version 6.7.0.)
+	FILE: /home/autobusmedinaaza/public_html/wp-includes/functions.php[6121]
+	--- TRACE ---
+	FUNCTION: trigger_error                 FILE: /home/autobusmedinaaza/public_html/wp-includes/functions.php[6121]
+	FUNCTION: wp_trigger_error              FILE: /home/autobusmedinaaza/public_html/wp-includes/functions.php[6061]
+	FUNCTION: _doing_it_wrong               FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[1379]
+	FUNCTION: _load_textdomain_just_in_time FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[1409]
+	FUNCTION: get_translations_for_domain   FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[195]
+	FUNCTION: translate                     FILE: /home/autobusmedinaaza/public_html/wp-includes/l10n.php[307]
+	FUNCTION: __                            FILE: /home/autobusmedinaaza/public_html/wp-content/plugins/advanced-custom-fields-pro/acf.php[94]
+	CLASS___: ACF->initialize               FILE: /home/autobusmedinaaza/public_html/wp-content/plugins/advanced-custom-fields-pro/acf.php[780]
+	FUNCTION: acf                           FILE: /home/autobusmedinaaza/public_html/wp-content/plugins/advanced-custom-fields-pro/acf.php[786]
+	FUNCTION: include_once                  FILE: /home/autobusmedinaaza/public_html/wp-settings.php[545]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-config.php[120]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-load.php[50]
+	FUNCTION: require                       FILE: /home/autobusmedinaaza/public_html/wp-login.php[12]
+	FUNCTION: require_once                  FILE: /home/autobusmedinaaza/public_html/wp-content/wp_test_script_c4fd236-06121014.php[117]
+-----
+For solutions to these issues see the online FAQs 
+https://duplicator.com/knowledge-base/ 
+
+
+====================================
+LOG-TIME[/home/autobusmedinaaza/public_html/dup-installer/ctrls/ctrl.base.php:227][DELTA:   0.02125]  MESSAGE:END RENDER PAGE
