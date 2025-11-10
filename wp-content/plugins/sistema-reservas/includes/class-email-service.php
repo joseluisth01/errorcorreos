@@ -155,9 +155,7 @@ class ReservasEmailService
         }
     }
 
-    /**
-     * Enviar email de confirmación al cliente CON PDF ADJUNTO
-     */
+
 public static function send_customer_confirmation($reserva_data)
 {
     error_log("=== INICIANDO ENVÍO EMAIL CLIENTE CON PDF ===");
@@ -171,12 +169,17 @@ public static function send_customer_confirmation($reserva_data)
 
     $message = self::build_customer_email_template($reserva_data);
 
-    // ✅ MEJORAR CONFIGURACIÓN DE HEADERS
+    // ✅ MEJORAR CONFIGURACIÓN DE HEADERS PARA WP MAIL SMTP
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
         'From: ' . $config['nombre_remitente'] . ' <' . $config['email_remitente'] . '>',
         'Reply-To: ' . $config['email_remitente']
     );
+
+    // ✅ AÑADIR PRIORIDAD NORMAL (no alta) para evitar flags de spam
+    $headers[] = 'X-Priority: 3'; // Prioridad normal
+    $headers[] = 'X-MSMail-Priority: Normal';
+    $headers[] = 'Importance: Normal';
 
     // ✅ GENERAR PDF CON MANEJO DE ERRORES MEJORADO
     $attachments = array();
@@ -211,46 +214,38 @@ public static function send_customer_confirmation($reserva_data)
         error_log("❌ Stack trace: " . $e->getTraceAsString());
     }
 
-    // ✅ CONFIGURAR PHPMAILER CORRECTAMENTE ANTES DE ENVIAR
+    // ✅ NO CONFIGURAR PHPMAILER MANUALMENTE - DEJAR QUE WP MAIL SMTP LO HAGA
+    // Eliminar este bloque:
+    /* 
     add_action('phpmailer_init', function($phpmailer) use ($config) {
-        error_log('=== CONFIGURANDO PHPMAILER PARA CLIENTE ===');
-        
-        // Configurar remitente
-        $phpmailer->setFrom($config['email_remitente'], $config['nombre_remitente']);
-        $phpmailer->addReplyTo($config['email_remitente'], $config['nombre_remitente']);
-        
-        // ✅ FORZAR MÉTODO MAIL() PHP (más compatible)
-        $phpmailer->isMail();
-        
-        // ✅ CONFIGURACIÓN ADICIONAL PARA EVITAR SPAM
-        $phpmailer->CharSet = 'UTF-8';
-        $phpmailer->Encoding = 'base64';
-        $phpmailer->Priority = 1; // Alta prioridad
-        
-        // ✅ AÑADIR HEADERS ANTI-SPAM
-        $phpmailer->XMailer = ' '; // Ocultar X-Mailer
-        
-        error_log('PHPMailer configurado - Método: mail()');
-        error_log('From: ' . $phpmailer->From);
-        error_log('FromName: ' . $phpmailer->FromName);
+        // ... código anterior ...
     }, 10, 1);
+    */
 
-    // ✅ ENVIAR EMAIL CON REINTENTOS
+    // ✅ ENVIAR EMAIL CON REINTENTOS Y DELAY
     error_log("=== ENVIANDO EMAIL A CLIENTE ===");
     error_log("To: " . $to);
     error_log("Subject: " . $subject);
     error_log("Attachments: " . ($pdf_generated ? "PDF incluido" : "SIN PDF"));
 
-    $max_attempts = 3;
+    $max_attempts = 2; // Reducir a 2 intentos
     $sent = false;
     
     for ($attempt = 1; $attempt <= $max_attempts; $attempt++) {
         error_log("Intento #$attempt de envío...");
         
+        // ✅ AÑADIR DELAY ENTRE EMAILS PARA EVITAR SPAM FLAGS
+        if ($attempt > 1) {
+            sleep(3); // Esperar 3 segundos entre reintentos
+        }
+        
         $sent = wp_mail($to, $subject, $message, $headers, $attachments);
         
         if ($sent) {
             error_log("✅ Email enviado exitosamente en intento #$attempt");
+            
+            // ✅ DELAY DESPUÉS DE ENVÍO EXITOSO
+            usleep(500000); // 0.5 segundos de delay después de envío
             break;
         } else {
             error_log("❌ Fallo en intento #$attempt");
@@ -259,10 +254,6 @@ public static function send_customer_confirmation($reserva_data)
             global $phpmailer;
             if (isset($phpmailer) && is_object($phpmailer)) {
                 error_log("Error PHPMailer: " . $phpmailer->ErrorInfo);
-            }
-            
-            if ($attempt < $max_attempts) {
-                sleep(2); // Esperar 2 segundos antes de reintentar
             }
         }
     }
@@ -277,12 +268,12 @@ public static function send_customer_confirmation($reserva_data)
         }
     }
 
-    // ✅ SI FALLÓ DESPUÉS DE TODOS LOS INTENTOS, ENVIAR ALERTA
+    // ✅ SI FALLÓ, NO REENVIAR ALERTA INMEDIATAMENTE
     if (!$sent) {
         error_log("❌ ERROR CRÍTICO: No se pudo enviar email al cliente después de $max_attempts intentos");
         
-        // Enviar alerta al admin
-        self::send_email_failure_alert($to, $reserva_data['localizador']);
+        // NO enviar alerta inmediatamente - programar para dentro de 5 minutos
+        wp_schedule_single_event(time() + 300, 'send_delayed_email_alert', array($to, $reserva_data['localizador']));
         
         return array(
             'success' => false, 
@@ -300,11 +291,11 @@ public static function send_customer_confirmation($reserva_data)
 }
 
 
-/**
- * ✅ NUEVA FUNCIÓN: Enviar alerta cuando falla el envío al cliente
- */
+
 private static function send_email_failure_alert($cliente_email, $localizador)
 {
+    error_log("⚠️ Enviando alerta de fallo de email");
+    
     $config = self::get_email_config();
     
     $admin_email = ReservasConfigurationAdmin::get_config('email_reservas', get_option('admin_email'));
@@ -321,6 +312,9 @@ private static function send_email_failure_alert($cliente_email, $localizador)
             <strong>Acción requerida:</strong> Contacta manualmente con el cliente 
             o reenvía el comprobante desde el panel de administración.
         </p>
+        <p style='margin-top: 15px;'>
+            <a href='" . home_url('/reservas-admin/') . "' style='display: inline-block; background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>Ir al Dashboard</a>
+        </p>
     </div>
     ";
     
@@ -329,9 +323,13 @@ private static function send_email_failure_alert($cliente_email, $localizador)
         'From: Sistema de Alertas <' . $config['email_remitente'] . '>'
     );
     
-    wp_mail($admin_email, $subject, $message, $headers);
+    $sent = wp_mail($admin_email, $subject, $message, $headers);
     
-    error_log("📧 Alerta de fallo enviada al admin: " . $admin_email);
+    if ($sent) {
+        error_log("📧 Alerta de fallo enviada al admin: " . $admin_email);
+    } else {
+        error_log("❌ Error enviando alerta de fallo al admin");
+    }
 }
 
 
@@ -415,15 +413,252 @@ private static function get_admin_email_by_service($reserva_data)
     }
 }
 
+
+private static function check_email_throttle($email_type = 'general')
+{
+    $throttle_key = 'reservas_email_throttle_' . $email_type;
+    $sent_count = get_transient($throttle_key);
+    
+    if ($sent_count === false) {
+        // Primera vez en esta hora
+        set_transient($throttle_key, 1, HOUR_IN_SECONDS);
+        return true;
+    }
+    
+    // Límites por tipo de email por hora
+    $limits = array(
+        'customer' => 50,  // Máximo 50 emails a clientes por hora
+        'admin' => 30,     // Máximo 30 emails a admin por hora
+        'agency' => 30     // Máximo 30 emails a agencias por hora
+    );
+    
+    $limit = $limits[$email_type] ?? 40;
+    
+    if ($sent_count >= $limit) {
+        error_log("⚠️ THROTTLE: Límite de emails alcanzado para $email_type ($sent_count/$limit)");
+        return false;
+    }
+    
+    // Incrementar contador
+    set_transient($throttle_key, $sent_count + 1, HOUR_IN_SECONDS);
+    return true;
+}
+
 /**
  * Enviar email de notificación al administrador (SIN PDF)
  * ✅ ACTUALIZADO: Detecta tipo de servicio y envía al email correcto
  */
 public static function send_admin_notification($reserva_data)
 {
-    $config = self::get_email_config();
 
-    // ✅ OBTENER EMAIL CORRECTO SEGÚN TIPO DE SERVICIO
+    if (!self::check_email_throttle('admin')) {
+        error_log("⚠️ Email a admin omitido por throttle");
+        // Programar para enviar más tarde
+        wp_schedule_single_event(time() + 3600, 'send_delayed_admin_notification', array($reserva_data));
+        return array('success' => true, 'message' => 'Email programado para envío posterior');
+    }
+
+    $config = self::get_email_config();
+    $admin_email = self::get_admin_email_by_service($reserva_data);
+
+    if (empty($admin_email)) {
+        error_log("❌ No hay email configurado para este tipo de servicio");
+        return array('success' => false, 'message' => 'Email de notificaciones no configurado');
+    }
+
+    // ✅ EN LUGAR DE ENVIAR INMEDIATAMENTE, AGREGAR A COLA
+    $queue_key = 'reservas_admin_notifications_queue';
+    $queue = get_transient($queue_key);
+    
+    if ($queue === false) {
+        $queue = array();
+    }
+    
+    $queue[] = array(
+        'reserva' => $reserva_data,
+        'timestamp' => time()
+    );
+    
+    set_transient($queue_key, $queue, 300); // 5 minutos
+    
+    // Si es la primera en la cola, programar envío agrupado en 2 minutos
+    if (count($queue) === 1) {
+        wp_schedule_single_event(time() + 120, 'send_grouped_admin_notifications');
+    }
+    
+    error_log("📋 Notificación agregada a cola de admin (" . count($queue) . " total)");
+    
+    return array('success' => true, 'message' => 'Notificación agregada a cola');
+}
+
+
+public static function send_grouped_admin_notifications()
+{
+    $queue_key = 'reservas_admin_notifications_queue';
+    $queue = get_transient($queue_key);
+    
+    if (empty($queue)) {
+        return;
+    }
+    
+    error_log("📧 Enviando " . count($queue) . " notificaciones agrupadas a admin");
+    
+    $config = self::get_email_config();
+    $admin_email = ReservasConfigurationAdmin::get_config('email_reservas', get_option('admin_email'));
+    
+    // Construir email con todas las reservas
+    $subject = "Resumen de Reservas - " . count($queue) . " nuevas reservas";
+    
+    $message = self::build_grouped_admin_email($queue);
+    
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . $config['nombre_remitente'] . ' <' . $config['email_remitente'] . '>'
+    );
+    
+    $sent = wp_mail($admin_email, $subject, $message, $headers);
+    
+    if ($sent) {
+        delete_transient($queue_key);
+        error_log("✅ Notificaciones agrupadas enviadas correctamente");
+    } else {
+        error_log("❌ Error enviando notificaciones agrupadas");
+    }
+}
+
+
+private static function build_grouped_admin_email($queue)
+{
+    $total_reservas = count($queue);
+    $total_personas = 0;
+    $total_ingresos = 0;
+    
+    foreach ($queue as $item) {
+        $reserva = $item['reserva'];
+        $total_personas += $reserva['total_personas'] ?? 0;
+        $total_ingresos += $reserva['precio_final'] ?? 0;
+    }
+    
+    $html = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset='UTF-8'>
+        <title>Resumen de Reservas</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        </style>
+    </head>
+    <body style='font-family: \"Inter\", -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: #2D2D2D; max-width: 700px; margin: 0 auto; padding: 0; background: #FAFAFA;'>
+        
+        <!-- Header -->
+        <div style='background: linear-gradient(135deg, #871727 0%, #A91D33 100%); color: #FFFFFF; text-align: center; padding: 50px 30px;'>
+            <h1 style='margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;'>RESUMEN DE RESERVAS</h1>
+            <div style='width: 60px; height: 3px; background: #EFCF4B; margin: 20px auto; border-radius: 2px;'></div>
+            <p style='margin: 0; font-size: 18px; font-weight: 500; opacity: 0.95;'>$total_reservas nuevas reservas recibidas</p>
+        </div>
+
+        <!-- Contenido principal -->
+        <div style='background: #FFFFFF; padding: 40px 30px;'>
+            
+            <!-- Resumen general -->
+            <div style='background: #EFCF4B; padding: 30px; text-align: center; border-radius: 10px; margin-bottom: 30px;'>
+                <div style='display: flex; justify-content: space-around; flex-wrap: wrap;'>
+                    <div style='padding: 10px;'>
+                        <div style='font-size: 14px; color: #2D2D2D; margin-bottom: 5px;'>TOTAL RESERVAS</div>
+                        <div style='font-size: 32px; font-weight: 700; color: #871727;'>$total_reservas</div>
+                    </div>
+                    <div style='padding: 10px;'>
+                        <div style='font-size: 14px; color: #2D2D2D; margin-bottom: 5px;'>TOTAL PERSONAS</div>
+                        <div style='font-size: 32px; font-weight: 700; color: #871727;'>$total_personas</div>
+                    </div>
+                    <div style='padding: 10px;'>
+                        <div style='font-size: 14px; color: #2D2D2D; margin-bottom: 5px;'>INGRESOS TOTALES</div>
+                        <div style='font-size: 32px; font-weight: 700; color: #871727;'>" . number_format($total_ingresos, 2) . "€</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lista de reservas -->
+            <h2 style='color: #871727; margin-bottom: 20px;'>Detalle de Reservas</h2>
+    ";
+    
+    foreach ($queue as $item) {
+        $reserva = $item['reserva'];
+        $fecha_formateada = date('d/m/Y', strtotime($reserva['fecha']));
+        $tiempo_transcurrido = human_time_diff($item['timestamp'], time());
+        
+        $html .= "
+            <div style='background: #F8F9FA; padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #EFCF4B;'>
+                <div style='display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;'>
+                    <div>
+                        <div style='font-size: 20px; font-weight: 700; color: #871727; margin-bottom: 5px;'>{$reserva['localizador']}</div>
+                        <div style='font-size: 14px; color: #666;'>Hace $tiempo_transcurrido</div>
+                    </div>
+                    <div style='text-align: right;'>
+                        <div style='font-size: 24px; font-weight: 700; color: #28a745;'>" . number_format($reserva['precio_final'], 2) . "€</div>
+                    </div>
+                </div>
+                
+                <table style='width: 100%; border-collapse: collapse;'>
+                    <tr>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Cliente:</td>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>{$reserva['nombre']} {$reserva['apellidos']}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Email:</td>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>{$reserva['email']}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Teléfono:</td>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>{$reserva['telefono']}</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Fecha servicio:</td>
+                        <td style='padding: 8px 0; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>$fecha_formateada a las " . substr($reserva['hora'], 0, 5) . "</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 8px 0; font-weight: 600; color: #2D2D2D;'>Personas:</td>
+                        <td style='padding: 8px 0; text-align: right; font-weight: 700; color: #871727;'>{$reserva['total_personas']} personas</td>
+                    </tr>
+                </table>
+            </div>
+        ";
+    }
+    
+    $html .= "
+            <!-- Acciones -->
+            <div style='text-align: center; margin-top: 40px; padding: 30px; background: #871727; border-radius: 8px;'>
+                <p style='margin: 0 0 20px 0; color: #FFFFFF; font-size: 18px; font-weight: 600;'>
+                    Accede al dashboard para gestionar estas reservas
+                </p>
+                <a href='" . home_url('/reservas-admin/') . "' style='display: inline-block; background: #EFCF4B; color: #2E2D2C; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;'>IR AL DASHBOARD</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style='text-align: center; padding: 40px 30px; background: #2D2D2D; color: #FFFFFF;'>
+            <div style='width: 40px; height: 2px; background: #EFCF4B; margin: 0 auto 20px;'></div>
+            <p style='margin: 0 0 15px 0; font-size: 14px; opacity: 0.8; line-height: 1.6;'>
+                Este es un resumen automático de reservas.<br>
+                Puedes gestionar todas las reservas desde el panel de administración.
+            </p>
+            <p style='margin: 0; color: #EFCF4B; font-weight: 600; font-size: 16px;'>
+                Sistema de Reservas - Medina Azahara
+            </p>
+        </div>
+
+    </body>
+    </html>";
+    
+    return $html;
+}
+
+public static function send_admin_notification_delayed($reserva_data)
+{
+    error_log('📧 Enviando notificación de admin retrasada');
+    
+    $config = self::get_email_config();
     $admin_email = self::get_admin_email_by_service($reserva_data);
 
     if (empty($admin_email)) {
@@ -447,13 +682,16 @@ public static function send_admin_notification($reserva_data)
     $sent = wp_mail($to, $subject, $message, $headers);
 
     if ($sent) {
-        error_log("✅ Email enviado al administrador ({$tipo_servicio}): " . $to);
+        error_log("✅ Email retrasado enviado al administrador ({$tipo_servicio}): " . $to);
         return array('success' => true, 'message' => 'Email enviado al administrador correctamente');
     } else {
-        error_log("❌ Error enviando email al administrador ({$tipo_servicio}): " . $to);
+        error_log("❌ Error enviando email retrasado al administrador ({$tipo_servicio}): " . $to);
         return array('success' => false, 'message' => 'Error enviando email al administrador');
     }
 }
+
+
+
 
 public static function send_reminder_email($reserva_data)
 {

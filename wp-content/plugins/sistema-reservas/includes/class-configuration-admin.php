@@ -229,7 +229,7 @@ class ReservasConfigurationAdmin
             ),
             array(
                 'config_key' => 'email_remitente',
-                'config_value' => get_option('info@autobusmedinaazahara.com'),
+                'config_value' => get_option('info2@autobusmedinaazahara.com'),
                 'config_group' => 'notificaciones',
                 'description' => 'Email remitente para todas las notificaciones del sistema (NO MODIFICAR sin conocimientos técnicos)'
             ),

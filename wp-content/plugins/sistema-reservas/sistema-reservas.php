@@ -3645,6 +3645,28 @@ function force_update_services_table_manual()
 }
 
 
+// ✅ Programar envío de notificaciones agrupadas
+add_action('send_grouped_admin_notifications', array('ReservasEmailService', 'send_grouped_admin_notifications'));
+
+// ✅ Hook para alertas retrasadas
+add_action('send_delayed_email_alert', function($email, $localizador) {
+    if (!class_exists('ReservasEmailService')) {
+        require_once RESERVAS_PLUGIN_PATH . 'includes/class-email-service.php';
+    }
+    
+    // Usar método estático correcto
+    $reflection = new ReflectionClass('ReservasEmailService');
+    $method = $reflection->getMethod('send_email_failure_alert');
+    $method->setAccessible(true);
+    $method->invoke(null, $email, $localizador);
+}, 10, 2);
+
+// ✅ Hook para notificaciones de admin retrasadas
+add_action('send_delayed_admin_notification', array('ReservasEmailService', 'send_admin_notification_delayed'), 10, 1);
+
+
+
+
 
 // Inicializar el plugin
 new SistemaReservas();
