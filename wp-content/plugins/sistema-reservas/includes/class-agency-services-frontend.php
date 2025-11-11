@@ -750,30 +750,44 @@ class ReservasAgencyServicesFrontend
     }
 
 
-    private function enviar_email_confirmacion_visita($reserva_data)
-    {
-        if (!class_exists('ReservasEmailService')) {
-            require_once RESERVAS_PLUGIN_PATH . 'includes/class-email-service.php';
-        }
-
-        // Enviar email al cliente CON PDF
-        $customer_result = ReservasEmailService::send_customer_confirmation($reserva_data);
-
-        if ($customer_result['success']) {
-            error_log('✅ Email enviado al cliente de visita guiada: ' . $reserva_data['email']);
-        } else {
-            error_log('❌ Error enviando email al cliente de visita: ' . $customer_result['message']);
-        }
-
-        // Enviar email al administrador
-        $admin_result = ReservasEmailService::send_admin_notification($reserva_data);
-
-        if ($admin_result['success']) {
-            error_log('✅ Email enviado al admin sobre visita guiada');
-        } else {
-            error_log('❌ Error enviando email al admin: ' . $admin_result['message']);
-        }
+    function enviar_email_confirmacion_visita($reserva_data) {
+    if (!class_exists('ReservasEmailService')) {
+        require_once RESERVAS_PLUGIN_PATH . 'includes/class-email-service.php';
     }
+
+    error_log('=== ENVIANDO EMAILS DE CONFIRMACIÓN DE VISITA ===');
+
+    // ✅ 1. EMAIL AL CLIENTE CON PDF
+    $customer_result = ReservasEmailService::send_customer_confirmation($reserva_data);
+
+    if ($customer_result['success']) {
+        error_log('✅ Email enviado al cliente de visita guiada: ' . $reserva_data['email']);
+    } else {
+        error_log('❌ Error enviando email al cliente de visita: ' . $customer_result['message']);
+    }
+
+    // ✅ 2. EMAIL AL ADMINISTRADOR DE VISITAS (email_visitas)
+    $admin_result = ReservasEmailService::send_admin_notification($reserva_data);
+
+    if ($admin_result['success']) {
+        error_log('✅ Email enviado al admin de visitas guiadas');
+    } else {
+        error_log('❌ Error enviando email al admin de visitas: ' . $admin_result['message']);
+    }
+
+    // ✅ 3. NUEVO: EMAIL A LA AGENCIA
+    if (!empty($reserva_data['agency_id'])) {
+        $agency_result = ReservasEmailService::send_agency_visita_notification($reserva_data);
+        
+        if ($agency_result['success']) {
+            error_log('✅ Email enviado a la agencia: ' . ($reserva_data['agency_email'] ?? 'email no disponible'));
+        } else {
+            error_log('❌ Error enviando email a la agencia: ' . $agency_result['message']);
+        }
+    } else {
+        error_log('⚠️ No se especificó agency_id, email a agencia omitido');
+    }
+}
 
     /**
      * ✅ RECURSIVO PARA BUSCAR LOCALIZADOR DISPONIBLE

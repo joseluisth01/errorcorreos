@@ -8584,7 +8584,7 @@ function renderAgencyVisitasGuiadas(data) {
     }
 
     const service = data.service;
-    const disabledHorarios = data.disabled_horarios || []; // ✅ NUEVO: Lista de horarios deshabilitados
+    const disabledHorarios = data.disabled_horarios || [];
 
     // Parsear horarios
     let horarios = {};
@@ -8608,7 +8608,7 @@ function renderAgencyVisitasGuiadas(data) {
         idiomas = {};
     }
 
-    // Parsear fechas excluidas
+    // ✅ Parsear fechas excluidas
     let fechasExcluidas = {};
     try {
         fechasExcluidas = typeof service.fechas_excluidas === 'string'
@@ -8619,14 +8619,12 @@ function renderAgencyVisitasGuiadas(data) {
         fechasExcluidas = {};
     }
 
-    // ✅ CREAR FUNCIÓN HELPER PARA VERIFICAR SI ESTÁ DESHABILITADO
     function isHorarioDisabled(dia, hora) {
         return disabledHorarios.some(item =>
             item.dia === dia && item.hora.substring(0, 5) === hora.substring(0, 5)
         );
     }
 
-    // Generar HTML
     const diasSemana = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
     const diasNombres = {
         'lunes': 'Lunes',
@@ -8646,10 +8644,8 @@ function renderAgencyVisitasGuiadas(data) {
                 const idiomasDia = idiomas[dia] || [];
                 const fechasExcluidasDia = fechasExcluidas[dia] || [];
 
-                // ✅ VERIFICAR SI ESTÁ DESHABILITADO
                 const isDisabled = isHorarioDisabled(dia, hora);
 
-                // Convertir idiomas a etiquetas
                 const idiomasConfig = {
                     'espanol': { label: 'Español', flag: '🇪🇸' },
                     'ingles': { label: 'Inglés', flag: '🇬🇧' },
@@ -8663,11 +8659,18 @@ function renderAgencyVisitasGuiadas(data) {
                     }).join('')
                     : '<span class="idioma-tag-empty">Sin idiomas configurados</span>';
 
+                // ✅ NUEVO: HTML mejorado para fechas excluidas con botón eliminar
                 const fechasHTML = fechasExcluidasDia.length > 0
-                    ? fechasExcluidasDia.map(fecha => `<span class="fecha-excluida-tag">${formatDateSimple(fecha)}</span>`).join('')
+                    ? fechasExcluidasDia.map(fecha => `
+                        <span class="fecha-excluida-tag-editable" data-fecha="${fecha}">
+                            ${formatDateSimple(fecha)}
+                            <button type="button" class="btn-remove-fecha-excluida" 
+                                    onclick="removeFechaExcluida('${dia}', '${hora}', '${fecha}')"
+                                    title="Eliminar esta fecha">×</button>
+                        </span>
+                    `).join('')
                     : '<span class="fecha-tag-empty">Sin fechas excluidas</span>';
 
-                // ✅ CAMBIAR ESTILO Y BOTÓN SEGÚN ESTADO
                 const cardClass = isDisabled ? 'visita-card visita-card-disabled' : 'visita-card';
                 const statusBadge = isDisabled
                     ? '<span class="status-badge status-disabled">❌ DESHABILITADA</span>'
@@ -8702,6 +8705,11 @@ function renderAgencyVisitasGuiadas(data) {
                             <div class="info-group">
                                 <strong>🚫 Fechas excluidas:</strong>
                                 <div class="fechas-excluidas-list">${fechasHTML}</div>
+                                <button type="button" class="btn-add-fecha-excluida" 
+                                        onclick="showAddFechaExcluidaModal('${dia}', '${hora}')"
+                                        title="Añadir fecha excluida">
+                                    ➕ Añadir fecha
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -8718,7 +8726,7 @@ function renderAgencyVisitasGuiadas(data) {
         <div class="agency-profile-management">
             <div class="section-header">
                 <h2>🗓️ Mis Visitas Guiadas</h2>
-                <p>Gestiona la visibilidad de tus visitas - Puedes activar/desactivar cuando quieras</p>
+                <p>Gestiona la visibilidad de tus visitas y excluye fechas específicas</p>
             </div>
             
             <div class="profile-actions">
@@ -8732,6 +8740,24 @@ function renderAgencyVisitasGuiadas(data) {
             </div>
             
             <div id="visitas-messages" class="profile-messages"></div>
+        </div>
+        
+        <!-- ✅ NUEVO: Modal para añadir fecha excluida -->
+        <div id="modal-add-fecha-excluida" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Añadir Fecha Excluida</h3>
+                    <button type="button" class="modal-close" onclick="closeAddFechaExcluidaModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <p>Selecciona la fecha que quieres excluir:</p>
+                    <input type="date" id="nueva-fecha-excluida" min="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closeAddFechaExcluidaModal()">Cancelar</button>
+                    <button class="btn-primary" onclick="confirmAddFechaExcluida()">Añadir Fecha</button>
+                </div>
+            </div>
         </div>
         
         <style>
@@ -8751,7 +8777,6 @@ function renderAgencyVisitasGuiadas(data) {
             transition: all 0.3s;
         }
         
-        /* ✅ ESTILO PARA VISITAS DESHABILITADAS */
         .visita-card-disabled {
             opacity: 0.6;
             border-left: 4px solid #dc3545;
@@ -8773,7 +8798,6 @@ function renderAgencyVisitasGuiadas(data) {
             font-size: 18px;
         }
         
-        /* ✅ BADGE DE ESTADO */
         .status-badge {
             padding: 4px 10px;
             border-radius: 20px;
@@ -8803,7 +8827,6 @@ function renderAgencyVisitasGuiadas(data) {
             font-weight: 600;
         }
         
-        /* ✅ BOTÓN DESHABILITAR (ROJO) */
         .btn-disable {
             background: #dc3545;
             color: white;
@@ -8814,7 +8837,6 @@ function renderAgencyVisitasGuiadas(data) {
             transform: scale(1.05);
         }
         
-        /* ✅ BOTÓN HABILITAR (VERDE) */
         .btn-enable {
             background: #28a745;
             color: white;
@@ -8863,19 +8885,130 @@ function renderAgencyVisitasGuiadas(data) {
             font-size: 13px;
         }
         
-        .fecha-excluida-tag {
+        /* ✅ NUEVO: Estilos para fechas excluidas editables */
+        .fecha-excluida-tag-editable {
             background: #ffc107;
             color: #333;
             padding: 6px 12px;
             border-radius: 5px;
             font-size: 12px;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-remove-fecha-excluida {
+            background: rgba(0,0,0,0.2);
+            border: none;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            padding: 0;
+            transition: all 0.2s;
+        }
+        
+        .btn-remove-fecha-excluida:hover {
+            background: #dc3545;
+            transform: scale(1.1);
+        }
+        
+        .btn-add-fecha-excluida {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.2s;
+        }
+        
+        .btn-add-fecha-excluida:hover {
+            background: #218838;
+            transform: translateY(-1px);
         }
         
         .fecha-tag-empty {
             color: #999;
             font-style: italic;
             font-size: 13px;
+        }
+        
+        /* ✅ NUEVO: Estilos del modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #23282d;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        
+        .modal-close:hover {
+            color: #dc3545;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-body input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
         
         @media (max-width: 768px) {
@@ -8898,6 +9031,139 @@ function renderAgencyVisitasGuiadas(data) {
 
     jQuery('.dashboard-content').html(content);
 }
+
+
+// ✅ Variables globales para el modal
+let currentDiaForFechaExcluida = null;
+let currentHoraForFechaExcluida = null;
+
+/**
+ * ✅ Mostrar modal para añadir fecha excluida
+ */
+function showAddFechaExcluidaModal(dia, hora) {
+    console.log('=== ABRIENDO MODAL AÑADIR FECHA ===');
+    console.log('Día:', dia, 'Hora:', hora);
+    
+    currentDiaForFechaExcluida = dia;
+    currentHoraForFechaExcluida = hora;
+    
+    // Resetear input
+    jQuery('#nueva-fecha-excluida').val('');
+    
+    // Mostrar modal
+    jQuery('#modal-add-fecha-excluida').fadeIn(200);
+}
+
+/**
+ * ✅ Cerrar modal
+ */
+function closeAddFechaExcluidaModal() {
+    jQuery('#modal-add-fecha-excluida').fadeOut(200);
+    currentDiaForFechaExcluida = null;
+    currentHoraForFechaExcluida = null;
+}
+
+/**
+ * ✅ Confirmar añadir fecha excluida
+ */
+function confirmAddFechaExcluida() {
+    const nuevaFecha = jQuery('#nueva-fecha-excluida').val();
+    
+    if (!nuevaFecha) {
+        alert('Por favor, selecciona una fecha');
+        return;
+    }
+    
+    if (!currentDiaForFechaExcluida || !currentHoraForFechaExcluida) {
+        alert('Error: No se pudo identificar la visita');
+        closeAddFechaExcluidaModal();
+        return;
+    }
+    
+    console.log('=== AÑADIENDO FECHA EXCLUIDA ===');
+    console.log('Día:', currentDiaForFechaExcluida);
+    console.log('Hora:', currentHoraForFechaExcluida);
+    console.log('Nueva fecha:', nuevaFecha);
+    
+    // Cerrar modal
+    closeAddFechaExcluidaModal();
+    
+    // Mostrar mensaje de carga
+    showVisitasMessage('info', '⏳ Añadiendo fecha excluida...');
+    
+    // Enviar solicitud AJAX
+    jQuery.ajax({
+        url: reservasAjax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'add_fecha_excluida_visita',
+            dia: currentDiaForFechaExcluida,
+            hora: currentHoraForFechaExcluida,
+            fecha: nuevaFecha,
+            nonce: reservasAjax.nonce
+        },
+        success: function (response) {
+            if (response.success) {
+                showVisitasMessage('success', '✅ ' + response.data);
+                // Recargar visitas
+                setTimeout(() => loadAgencyVisitasGuiadas(), 1500);
+            } else {
+                showVisitasMessage('error', '❌ Error: ' + response.data);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error AJAX:', error);
+            showVisitasMessage('error', '❌ Error de conexión');
+        }
+    });
+}
+
+/**
+ * ✅ Eliminar fecha excluida
+ */
+function removeFechaExcluida(dia, hora, fecha) {
+    if (!confirm(`¿Estás seguro de que quieres eliminar la fecha ${formatDateSimple(fecha)}?`)) {
+        return;
+    }
+    
+    console.log('=== ELIMINANDO FECHA EXCLUIDA ===');
+    console.log('Día:', dia);
+    console.log('Hora:', hora);
+    console.log('Fecha:', fecha);
+    
+    showVisitasMessage('info', '⏳ Eliminando fecha excluida...');
+    
+    jQuery.ajax({
+        url: reservasAjax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'remove_fecha_excluida_visita',
+            dia: dia,
+            hora: hora,
+            fecha: fecha,
+            nonce: reservasAjax.nonce
+        },
+        success: function (response) {
+            if (response.success) {
+                showVisitasMessage('success', '✅ ' + response.data);
+                // Recargar visitas
+                setTimeout(() => loadAgencyVisitasGuiadas(), 1500);
+            } else {
+                showVisitasMessage('error', '❌ Error: ' + response.data);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+            showVisitasMessage('error', '❌ Error de conexión');
+        }
+    });
+}
+
+// ✅ Exponer funciones globalmente
+window.showAddFechaExcluidaModal = showAddFechaExcluidaModal;
+window.closeAddFechaExcluidaModal = closeAddFechaExcluidaModal;
+window.confirmAddFechaExcluida = confirmAddFechaExcluida;
+window.removeFechaExcluida = removeFechaExcluida;
 
 function toggleVisitaStatus(dia, hora, isCurrentlyDisabled) {
     const action = isCurrentlyDisabled ? 'habilitar' : 'deshabilitar';

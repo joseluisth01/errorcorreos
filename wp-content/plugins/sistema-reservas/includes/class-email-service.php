@@ -290,6 +290,158 @@ public static function send_customer_confirmation($reserva_data)
     return array('success' => true, 'message' => $success_msg);
 }
 
+public static function send_agency_visita_notification($reserva_data)
+{
+    error_log('=== ENVIANDO EMAIL A AGENCIA SOBRE VISITA ===');
+    
+    $config = self::get_email_config();
+    
+    // ✅ OBTENER EMAIL DE LA AGENCIA
+    global $wpdb;
+    $table_agencies = $wpdb->prefix . 'reservas_agencies';
+    
+    $agency = $wpdb->get_row($wpdb->prepare(
+        "SELECT email, email_notificaciones, agency_name FROM $table_agencies WHERE id = %d",
+        $reserva_data['agency_id']
+    ));
+    
+    if (!$agency) {
+        error_log('❌ No se encontró la agencia con ID: ' . $reserva_data['agency_id']);
+        return array('success' => false, 'message' => 'Agencia no encontrada');
+    }
+    
+    // ✅ PRIORIZAR email_notificaciones
+    $agency_email = !empty($agency->email_notificaciones) ? 
+        $agency->email_notificaciones : 
+        $agency->email;
+    
+    if (empty($agency_email)) {
+        error_log('❌ La agencia no tiene email configurado');
+        return array('success' => false, 'message' => 'Agencia sin email');
+    }
+    
+    error_log('📧 Enviando email a agencia: ' . $agency_email);
+    
+    $subject = "Nueva Reserva de Visita - " . $reserva_data['localizador'] . " - " . $agency->agency_name;
+    
+    $message = self::build_agency_visita_notification_template($reserva_data, $agency);
+    
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . $config['nombre_remitente'] . ' <' . $config['email_remitente'] . '>'
+    );
+    
+    // ✅ ENVIAR CON WP MAIL (usa WP Mail SMTP automáticamente)
+    $sent = wp_mail($agency_email, $subject, $message, $headers);
+    
+    if ($sent) {
+        error_log("✅ Email enviado a la agencia: " . $agency_email);
+        return array('success' => true, 'message' => 'Email enviado a la agencia');
+    } else {
+        global $phpmailer;
+        $error = isset($phpmailer) ? $phpmailer->ErrorInfo : 'Error desconocido';
+        error_log("❌ Error enviando email a la agencia: " . $error);
+        return array('success' => false, 'message' => 'Error enviando email a la agencia: ' . $error);
+    }
+}
+
+
+private static function build_agency_visita_notification_template($reserva, $agency)
+{
+    $fecha_formateada = date('d/m/Y', strtotime($reserva['fecha']));
+    $fecha_creacion = date('d/m/Y H:i', strtotime($reserva['created_at'] ?? 'now'));
+
+    return "
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Nueva Reserva de Visita - {$agency->agency_name}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+</head>
+<body style='font-family: \"Inter\", -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: #2D2D2D; max-width: 700px; margin: 0 auto; padding: 0; background: #FAFAFA;'>
+    
+    <!-- Header -->
+    <div style='background: linear-gradient(135deg, #0073aa 0%, #005177 100%); color: #FFFFFF; text-align: center; padding: 50px 30px;'>
+        <h1 style='margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;'>NUEVA RESERVA DE VISITA</h1>
+        <div style='width: 60px; height: 3px; background: #EFCF4B; margin: 20px auto; border-radius: 2px;'></div>
+        <p style='margin: 0; font-size: 18px; font-weight: 500; opacity: 0.95;'>{$agency->agency_name}</p>
+    </div>
+
+    <!-- Localizador -->
+    <div style='background: #EFCF4B; padding: 30px; text-align: center; border-bottom: 1px solid #E0E0E0;'>
+        <h2 style='margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: #2D2D2D; text-transform: uppercase; letter-spacing: 1px;'>LOCALIZADOR</h2>
+        <div style='font-size: 28px; font-weight: 700; color: #871727; letter-spacing: 3px; font-family: monospace; margin: 10px 0;'>{$reserva['localizador']}</div>
+    </div>
+
+    <!-- Información de la reserva -->
+    <div style='padding: 40px 30px; border-bottom: 1px solid #E0E0E0;'>
+        <h3 style='margin: 0 0 25px 0; font-size: 20px; font-weight: 700; color: #0073aa; text-align: center;'>Detalles de la Reserva</h3>
+        
+        <table style='width: 100%; border-collapse: collapse; background: #FFFFFF; border: 2px solid #0073aa; border-radius: 8px; overflow: hidden;'>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Fecha:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>{$fecha_formateada} - {$reserva['hora']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Cliente:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>{$reserva['nombre']} {$reserva['apellidos']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Email:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>{$reserva['email']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Teléfono:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>{$reserva['telefono']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Adultos:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>{$reserva['adultos']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Niños:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>{$reserva['ninos']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Niños menores:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>{$reserva['ninos_menores']}</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Idioma:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>" . ucfirst($reserva['idioma'] ?? 'español') . "</td>
+            </tr>
+            <tr style='background: #0073aa;'>
+                <td style='padding: 20px 25px; font-size: 20px; font-weight: 700; color: #FFFFFF;'>TOTAL:</td>
+                <td style='padding: 20px 25px; text-align: right; font-size: 24px; font-weight: 700; color: #FFFFFF;'>" . number_format($reserva['precio_total'], 2) . "€</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Información importante -->
+    <div style='padding: 40px 30px; background: #FFFFFF;'>
+        <div style='background: #E8F4F8; padding: 30px; border-radius: 8px; border-left: 4px solid #0073aa;'>
+            <h4 style='margin: 0 0 15px 0; color: #0073aa;'>✅ Estado:</h4>
+            <ul style='margin: 0; padding-left: 20px; color: #2D2D2D;'>
+                <li>Reserva confirmada y pagada</li>
+                <li>Cliente notificado con billete PDF</li>
+                <li>Fecha de reserva: {$fecha_creacion}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style='text-align: center; padding: 40px 30px; background: #2D2D2D; color: #FFFFFF;'>
+        <p style='margin: 0; color: #0073aa; font-weight: 600; font-size: 16px;'>
+            Sistema de Reservas - Medina Azahara
+        </p>
+    </div>
+
+</body>
+</html>";
+}
 
 
 private static function send_email_failure_alert($cliente_email, $localizador)
@@ -751,7 +903,7 @@ private static function get_email_config()
         'email_remitente' => ReservasConfigurationAdmin::get_config('email_remitente', get_option('admin_email')),
         'nombre_remitente' => ReservasConfigurationAdmin::get_config('nombre_remitente', get_bloginfo('name')),
         'email_reservas' => ReservasConfigurationAdmin::get_config('email_reservas', get_option('admin_email')),
-        'email_visitas' => ReservasConfigurationAdmin::get_config('email_visitas', get_option('admin_email')),
+        'email_visitas' => ReservasConfigurationAdmin::get_config('email_visitas', get_option('admin_email')), // ✅ YA EXISTE
     );
 }
 
