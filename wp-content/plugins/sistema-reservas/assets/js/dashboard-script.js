@@ -8488,7 +8488,6 @@ function showErrorInContent(message) {
 }
 
 
-// Agregar al archivo: wp-content/plugins/sistema-reservas/assets/js/dashboard-script.js
 
 /**
  * Función para cargar el perfil de la agencia
@@ -9033,41 +9032,47 @@ function renderAgencyVisitasGuiadas(data) {
 }
 
 
-// ✅ Variables globales para el modal
 let currentDiaForFechaExcluida = null;
 let currentHoraForFechaExcluida = null;
 
-/**
- * ✅ Mostrar modal para añadir fecha excluida
- */
 function showAddFechaExcluidaModal(dia, hora) {
     console.log('=== ABRIENDO MODAL AÑADIR FECHA ===');
-    console.log('Día:', dia, 'Hora:', hora);
+    console.log('Día recibido:', dia);
+    console.log('Hora recibida:', hora);
     
+    // ✅ GUARDAR EN VARIABLES GLOBALES
     currentDiaForFechaExcluida = dia;
     currentHoraForFechaExcluida = hora;
     
+    console.log('Variables guardadas:');
+    console.log('- currentDiaForFechaExcluida:', currentDiaForFechaExcluida);
+    console.log('- currentHoraForFechaExcluida:', currentHoraForFechaExcluida);
+    
     // Resetear input
     jQuery('#nueva-fecha-excluida').val('');
+    
+    // Establecer fecha mínima (mañana)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+    jQuery('#nueva-fecha-excluida').attr('min', minDate);
     
     // Mostrar modal
     jQuery('#modal-add-fecha-excluida').fadeIn(200);
 }
 
-/**
- * ✅ Cerrar modal
- */
 function closeAddFechaExcluidaModal() {
     jQuery('#modal-add-fecha-excluida').fadeOut(200);
-    currentDiaForFechaExcluida = null;
-    currentHoraForFechaExcluida = null;
+    // ✅ NO resetear las variables aquí, se hará después del AJAX
 }
 
-/**
- * ✅ Confirmar añadir fecha excluida
- */
 function confirmAddFechaExcluida() {
     const nuevaFecha = jQuery('#nueva-fecha-excluida').val();
+    
+    console.log('=== CONFIRMAR AÑADIR FECHA ===');
+    console.log('Nueva fecha seleccionada:', nuevaFecha);
+    console.log('Día actual:', currentDiaForFechaExcluida);
+    console.log('Hora actual:', currentHoraForFechaExcluida);
     
     if (!nuevaFecha) {
         alert('Por favor, selecciona una fecha');
@@ -9075,17 +9080,39 @@ function confirmAddFechaExcluida() {
     }
     
     if (!currentDiaForFechaExcluida || !currentHoraForFechaExcluida) {
-        alert('Error: No se pudo identificar la visita');
+        console.error('❌ Variables globales perdidas');
+        console.error('currentDiaForFechaExcluida:', currentDiaForFechaExcluida);
+        console.error('currentHoraForFechaExcluida:', currentHoraForFechaExcluida);
+        alert('Error: No se pudo identificar la visita. Por favor, recarga la página.');
         closeAddFechaExcluidaModal();
+        // Resetear variables al cerrar por error
+        currentDiaForFechaExcluida = null;
+        currentHoraForFechaExcluida = null;
         return;
     }
     
-    console.log('=== AÑADIENDO FECHA EXCLUIDA ===');
-    console.log('Día:', currentDiaForFechaExcluida);
-    console.log('Hora:', currentHoraForFechaExcluida);
-    console.log('Nueva fecha:', nuevaFecha);
+    // Validar que la fecha no sea pasada
+    const fechaSeleccionada = new Date(nuevaFecha);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
     
-    // Cerrar modal
+    if (fechaSeleccionada < hoy) {
+        alert('No puedes excluir fechas pasadas');
+        return;
+    }
+    
+    console.log('✅ Validaciones pasadas, enviando AJAX...');
+    
+    // ✅ GUARDAR EN VARIABLES LOCALES **ANTES** DE CERRAR MODAL
+    const diaToSend = currentDiaForFechaExcluida;
+    const horaToSend = currentHoraForFechaExcluida;
+    
+    console.log('Datos que se enviarán:');
+    console.log('- dia:', diaToSend);
+    console.log('- hora:', horaToSend);
+    console.log('- fecha:', nuevaFecha);
+    
+    // ✅ AHORA SÍ cerrar modal
     closeAddFechaExcluidaModal();
     
     // Mostrar mensaje de carga
@@ -9097,30 +9124,44 @@ function confirmAddFechaExcluida() {
         type: 'POST',
         data: {
             action: 'add_fecha_excluida_visita',
-            dia: currentDiaForFechaExcluida,
-            hora: currentHoraForFechaExcluida,
+            dia: diaToSend,  // ✅ USAR VARIABLE LOCAL
+            hora: horaToSend, // ✅ USAR VARIABLE LOCAL
             fecha: nuevaFecha,
             nonce: reservasAjax.nonce
         },
         success: function (response) {
+            console.log('Respuesta del servidor:', response);
+            
+            // ✅ RESETEAR VARIABLES GLOBALES DESPUÉS DEL AJAX
+            currentDiaForFechaExcluida = null;
+            currentHoraForFechaExcluida = null;
+            
             if (response.success) {
                 showVisitasMessage('success', '✅ ' + response.data);
-                // Recargar visitas
-                setTimeout(() => loadAgencyVisitasGuiadas(), 1500);
+                // Recargar visitas después de 1.5 segundos
+                setTimeout(() => {
+                    console.log('Recargando visitas...');
+                    loadAgencyVisitasGuiadas();
+                }, 1500);
             } else {
+                console.error('❌ Error del servidor:', response.data);
                 showVisitasMessage('error', '❌ Error: ' + response.data);
             }
         },
         error: function (xhr, status, error) {
-            console.error('Error AJAX:', error);
+            console.error('❌ Error AJAX:', error);
+            console.error('Status:', status);
+            console.error('XHR:', xhr);
+            
+            // ✅ RESETEAR VARIABLES GLOBALES TAMBIÉN EN ERROR
+            currentDiaForFechaExcluida = null;
+            currentHoraForFechaExcluida = null;
+            
             showVisitasMessage('error', '❌ Error de conexión');
         }
     });
 }
 
-/**
- * ✅ Eliminar fecha excluida
- */
 function removeFechaExcluida(dia, hora, fecha) {
     if (!confirm(`¿Estás seguro de que quieres eliminar la fecha ${formatDateSimple(fecha)}?`)) {
         return;
@@ -9159,7 +9200,6 @@ function removeFechaExcluida(dia, hora, fecha) {
     });
 }
 
-// ✅ Exponer funciones globalmente
 window.showAddFechaExcluidaModal = showAddFechaExcluidaModal;
 window.closeAddFechaExcluidaModal = closeAddFechaExcluidaModal;
 window.confirmAddFechaExcluida = confirmAddFechaExcluida;

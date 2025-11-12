@@ -521,19 +521,42 @@ class ReservasAgencyProfileAdmin
         return;
     }
 
-    $dia = sanitize_text_field($_POST['dia']);
-    $hora = sanitize_text_field($_POST['hora']);
-    $fecha = sanitize_text_field($_POST['fecha']);
+    // ✅ LOGGING DETALLADO DE LOS DATOS RECIBIDOS
+    error_log('POST data recibida: ' . print_r($_POST, true));
+    
+    $dia = sanitize_text_field($_POST['dia'] ?? '');
+    $hora = sanitize_text_field($_POST['hora'] ?? '');
+    $fecha = sanitize_text_field($_POST['fecha'] ?? '');
     $agency_id = $_SESSION['reservas_user']['id'];
 
-    // Validar fecha
+    error_log('Datos después de sanitizar:');
+    error_log('- dia: "' . $dia . '" (longitud: ' . strlen($dia) . ')');
+    error_log('- hora: "' . $hora . '" (longitud: ' . strlen($hora) . ')');
+    error_log('- fecha: "' . $fecha . '"');
+    error_log('- agency_id: ' . $agency_id);
+
+    // ✅ VALIDACIONES MEJORADAS
+    if (empty($dia)) {
+        error_log('❌ ERROR: El día está vacío');
+        wp_send_json_error('El día de la semana no fue recibido correctamente. Por favor, recarga la página e intenta de nuevo.');
+        return;
+    }
+
+    if (empty($hora)) {
+        error_log('❌ ERROR: La hora está vacía');
+        wp_send_json_error('La hora no fue recibida correctamente. Por favor, recarga la página e intenta de nuevo.');
+        return;
+    }
+
     if (empty($fecha) || strtotime($fecha) === false) {
+        error_log('❌ ERROR: Fecha inválida o vacía');
         wp_send_json_error('Fecha inválida');
         return;
     }
 
     // Validar que la fecha no sea pasada
     if (strtotime($fecha) < strtotime(date('Y-m-d'))) {
+        error_log('❌ ERROR: Intento de excluir fecha pasada');
         wp_send_json_error('No se pueden excluir fechas pasadas');
         return;
     }
@@ -543,12 +566,45 @@ class ReservasAgencyProfileAdmin
 
     // Obtener servicio actual
     $service = $wpdb->get_row($wpdb->prepare(
-        "SELECT fechas_excluidas FROM $table_services WHERE agency_id = %d",
+        "SELECT fechas_excluidas, horarios_disponibles FROM $table_services WHERE agency_id = %d",
         $agency_id
     ));
 
     if (!$service) {
+        error_log('❌ ERROR: Servicio no encontrado para agency_id: ' . $agency_id);
         wp_send_json_error('Servicio no encontrado');
+        return;
+    }
+
+    // ✅ VERIFICAR QUE EL DÍA Y HORA EXISTEN EN LOS HORARIOS
+    $horarios = array();
+    if (!empty($service->horarios_disponibles)) {
+        $horarios = json_decode($service->horarios_disponibles, true);
+        if (!is_array($horarios)) {
+            $horarios = array();
+        }
+    }
+
+    if (!isset($horarios[$dia])) {
+        error_log('❌ ERROR: El día "' . $dia . '" no existe en horarios_disponibles');
+        error_log('Horarios disponibles: ' . print_r(array_keys($horarios), true));
+        wp_send_json_error('El día especificado no está configurado en este servicio');
+        return;
+    }
+
+    $hora_normalizada = substr($hora, 0, 5); // Asegurar formato HH:MM
+    $hora_existe = false;
+    foreach ($horarios[$dia] as $horario_disponible) {
+        if (substr($horario_disponible, 0, 5) === $hora_normalizada) {
+            $hora_existe = true;
+            break;
+        }
+    }
+
+    if (!$hora_existe) {
+        error_log('❌ ERROR: La hora "' . $hora . '" no existe para el día "' . $dia . '"');
+        error_log('Horas disponibles para ' . $dia . ': ' . print_r($horarios[$dia], true));
+        wp_send_json_error('La hora especificada no está configurada para este día');
         return;
     }
 
@@ -573,6 +629,7 @@ class ReservasAgencyProfileAdmin
 
     // Verificar si la fecha ya está excluida
     if (in_array($fecha, $fechas_excluidas[$dia])) {
+        error_log('⚠️ AVISO: Fecha ya excluida: ' . $fecha . ' para ' . $dia);
         wp_send_json_error('Esta fecha ya está excluida');
         return;
     }
@@ -583,19 +640,24 @@ class ReservasAgencyProfileAdmin
     // Ordenar fechas
     sort($fechas_excluidas[$dia]);
 
+    error_log('Fechas excluidas actualizadas para ' . $dia . ': ' . print_r($fechas_excluidas[$dia], true));
+
     // Guardar en BD
+    $fechas_json = json_encode($fechas_excluidas, JSON_UNESCAPED_UNICODE);
+    error_log('JSON a guardar: ' . $fechas_json);
+
     $result = $wpdb->update(
         $table_services,
-        array('fechas_excluidas' => json_encode($fechas_excluidas)),
+        array('fechas_excluidas' => $fechas_json),
         array('agency_id' => $agency_id)
     );
 
     if ($result !== false) {
-        error_log("✅ Fecha excluida añadida: $fecha para $dia");
+        error_log("✅ Fecha excluida añadida correctamente: $fecha para $dia");
         wp_send_json_success("Fecha $fecha excluida correctamente para $dia");
     } else {
-        error_log('❌ Error actualizando fechas excluidas: ' . $wpdb->last_error);
-        wp_send_json_error('Error guardando la fecha excluida');
+        error_log('❌ Error actualizando fechas excluidas en BD: ' . $wpdb->last_error);
+        wp_send_json_error('Error guardando la fecha excluida: ' . $wpdb->last_error);
     }
 }
 
