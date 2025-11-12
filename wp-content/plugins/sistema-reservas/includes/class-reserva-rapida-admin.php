@@ -766,6 +766,29 @@ class ReservasReservaRapidaAdmin
             $data_format[] = '%d'; // agency_id
         }
 
+        if ($user_type === 'admin') {
+            $table_rapidas = $wpdb->prefix . 'reservas_rapidas';
+
+            $wpdb->insert(
+                $table_rapidas,
+                array(
+                    'reserva_id' => $reserva_id,
+                    'localizador' => $localizador,
+                    'user_id' => $user['id'] ?? 0,
+                    'username' => $user['username'] ?? 'admin',
+                    'user_type' => 'admin',
+                    'created_at' => current_time('mysql')
+                ),
+                array('%d', '%s', '%d', '%s', '%s', '%s')
+            );
+
+            if ($wpdb->last_error) {
+                error_log('⚠️ Error registrando reserva rápida: ' . $wpdb->last_error);
+            } else {
+                error_log('✅ Reserva rápida registrada en wp_reservas_rapidas');
+            }
+        }
+
         // ✅✅✅ LOG ANTES DE INSERTAR
         error_log('=== DATOS ANTES DE INSERTAR RESERVA RÁPIDA ===');
         error_log('es_reserva_rapida = ' . $reserva_data['es_reserva_rapida']);
