@@ -701,142 +701,153 @@ class ReservasReservaRapidaAdmin
     }
 
     private function create_reservation($datos, $price_data, $user, $user_type)
-    {
-        global $wpdb;
+{
+    global $wpdb;
 
-        $table_reservas = $wpdb->prefix . 'reservas_reservas';
+    $table_reservas = $wpdb->prefix . 'reservas_reservas';
 
-        // ✅ GENERAR LOCALIZADOR CON SOPORTE PARA AGENCIAS
-        $localizador = $this->generate_localizador($user, $user_type);
+    // ✅ GENERAR LOCALIZADOR CON SOPORTE PARA AGENCIAS
+    $localizador = $this->generate_localizador($user, $user_type);
 
-        $reserva_data = array(
-            'localizador' => $localizador,
-            'servicio_id' => $datos['service_id'],
-            'fecha' => $datos['fecha'],
-            'hora' => $datos['hora'],
-            'nombre' => $datos['nombre'],
-            'apellidos' => $datos['apellidos'],
-            'email' => $datos['email'],
-            'telefono' => $datos['telefono'],
-            'adultos' => $datos['adultos'],
-            'residentes' => $datos['residentes'],
-            'ninos_5_12' => $datos['ninos_5_12'],
-            'ninos_menores' => $datos['ninos_menores'],
-            'total_personas' => $datos['total_personas'],
-            'precio_base' => $price_data['precio_base'],
-            'descuento_total' => $price_data['descuento_total'],
-            'precio_final' => $price_data['precio_final'],
-            'regla_descuento_aplicada' => $price_data['regla_descuento_aplicada'] ? json_encode($price_data['regla_descuento_aplicada']) : null,
-            'estado' => 'confirmada',
-            'metodo_pago' => $user_type === 'agency' ? 'reserva_rapida_agencia' : 'reserva_rapida_admin',
-            'es_reserva_rapida' => 1 // ✅ MARCAR COMO RESERVA RÁPIDA
-        );
+    $reserva_data = array(
+        'localizador' => $localizador,
+        'servicio_id' => $datos['service_id'],
+        'fecha' => $datos['fecha'],
+        'hora' => $datos['hora'],
+        'nombre' => $datos['nombre'],
+        'apellidos' => $datos['apellidos'],
+        'email' => $datos['email'],
+        'telefono' => $datos['telefono'],
+        'adultos' => $datos['adultos'],
+        'residentes' => $datos['residentes'],
+        'ninos_5_12' => $datos['ninos_5_12'],
+        'ninos_menores' => $datos['ninos_menores'],
+        'total_personas' => $datos['total_personas'],
+        'precio_base' => $price_data['precio_base'],
+        'descuento_total' => $price_data['descuento_total'],
+        'precio_final' => $price_data['precio_final'],
+        'regla_descuento_aplicada' => $price_data['regla_descuento_aplicada'] ? json_encode($price_data['regla_descuento_aplicada']) : null,
+        'estado' => 'confirmada',
+        'metodo_pago' => $user_type === 'agency' ? 'reserva_rapida_agencia' : 'reserva_rapida_admin',
+        'es_reserva_rapida' => 1
+    );
 
-        // ✅ AÑADIR AGENCY_ID SI ES UNA AGENCIA
-        if ($user_type === 'agency' && isset($user['id'])) {
-            $reserva_data['agency_id'] = $user['id'];
-        }
-
-        // ✅✅✅ FORMATOS EXPLÍCITOS PARA wpdb->insert()
-        $data_format = array(
-            '%s', // localizador
-            '%d', // servicio_id
-            '%s', // fecha
-            '%s', // hora
-            '%s', // nombre
-            '%s', // apellidos
-            '%s', // email
-            '%s', // telefono
-            '%d', // adultos
-            '%d', // residentes
-            '%d', // ninos_5_12
-            '%d', // ninos_menores
-            '%d', // total_personas
-            '%f', // precio_base
-            '%f', // descuento_total
-            '%f', // precio_final
-            '%s', // regla_descuento_aplicada
-            '%s', // estado
-            '%s', // metodo_pago
-            '%d'  // es_reserva_rapida
-        );
-
-        // Si hay agency_id, añadir su formato
-        if ($user_type === 'agency' && isset($user['id'])) {
-            $data_format[] = '%d'; // agency_id
-        }
-
-        if ($user_type === 'admin') {
-            $table_rapidas = $wpdb->prefix . 'reservas_rapidas';
-
-            $wpdb->insert(
-                $table_rapidas,
-                array(
-                    'reserva_id' => $reserva_id,
-                    'localizador' => $localizador,
-                    'user_id' => $user['id'] ?? 0,
-                    'username' => $user['username'] ?? 'admin',
-                    'user_type' => 'admin',
-                    'created_at' => current_time('mysql')
-                ),
-                array('%d', '%s', '%d', '%s', '%s', '%s')
-            );
-
-            if ($wpdb->last_error) {
-                error_log('⚠️ Error registrando reserva rápida: ' . $wpdb->last_error);
-            } else {
-                error_log('✅ Reserva rápida registrada en wp_reservas_rapidas');
-            }
-        }
-
-        // ✅✅✅ LOG ANTES DE INSERTAR
-        error_log('=== DATOS ANTES DE INSERTAR RESERVA RÁPIDA ===');
-        error_log('es_reserva_rapida = ' . $reserva_data['es_reserva_rapida']);
-        error_log('metodo_pago = ' . $reserva_data['metodo_pago']);
-        error_log('user_type = ' . $user_type);
-
-        $resultado = $wpdb->insert($table_reservas, $reserva_data, $data_format);
-
-        if ($resultado === false) {
-            error_log('❌ ERROR AL INSERTAR: ' . $wpdb->last_error);
-            error_log('❌ QUERY: ' . $wpdb->last_query);
-            return array('success' => false, 'error' => 'Error guardando la reserva: ' . $wpdb->last_error);
-        }
-
-        $reserva_id = $wpdb->insert_id;
-
-        // ✅✅✅ LOG DESPUÉS DE INSERTAR - VERIFICAR QUÉ SE GUARDÓ REALMENTE
-        $reserva_verificacion = $wpdb->get_row($wpdb->prepare(
-            "SELECT es_reserva_rapida, metodo_pago FROM $table_reservas WHERE id = %d",
-            $reserva_id
-        ));
-
-        error_log('=== VERIFICACIÓN DESPUÉS DE INSERTAR ===');
-        error_log('Reserva ID: ' . $reserva_id);
-        error_log('es_reserva_rapida en BD = ' . $reserva_verificacion->es_reserva_rapida);
-        error_log('metodo_pago en BD = ' . $reserva_verificacion->metodo_pago);
-
-        if ($reserva_verificacion->es_reserva_rapida != 1) {
-            error_log('❌❌❌ PROBLEMA: El campo no se guardó como 1, intentando UPDATE manual');
-
-            // Forzar update si no se guardó correctamente
-            $wpdb->update(
-                $table_reservas,
-                array('es_reserva_rapida' => 1),
-                array('id' => $reserva_id),
-                array('%d'),
-                array('%d')
-            );
-
-            error_log('UPDATE manual ejecutado. Query: ' . $wpdb->last_query);
-        }
-
-        return array(
-            'success' => true,
-            'reservation_id' => $reserva_id,
-            'localizador' => $localizador
-        );
+    // ✅ AÑADIR AGENCY_ID SI ES UNA AGENCIA
+    if ($user_type === 'agency' && isset($user['id'])) {
+        $reserva_data['agency_id'] = $user['id'];
     }
+
+    // ✅✅✅ FORMATOS EXPLÍCITOS PARA wpdb->insert()
+    $data_format = array(
+        '%s', // localizador
+        '%d', // servicio_id
+        '%s', // fecha
+        '%s', // hora
+        '%s', // nombre
+        '%s', // apellidos
+        '%s', // email
+        '%s', // telefono
+        '%d', // adultos
+        '%d', // residentes
+        '%d', // ninos_5_12
+        '%d', // ninos_menores
+        '%d', // total_personas
+        '%f', // precio_base
+        '%f', // descuento_total
+        '%f', // precio_final
+        '%s', // regla_descuento_aplicada
+        '%s', // estado
+        '%s', // metodo_pago
+        '%d'  // es_reserva_rapida
+    );
+
+    // Si hay agency_id, añadir su formato
+    if ($user_type === 'agency' && isset($user['id'])) {
+        $data_format[] = '%d'; // agency_id
+    }
+
+    // ✅✅✅ LOG ANTES DE INSERTAR
+    error_log('=== DATOS ANTES DE INSERTAR RESERVA RÁPIDA ===');
+    error_log('es_reserva_rapida = ' . $reserva_data['es_reserva_rapida']);
+    error_log('metodo_pago = ' . $reserva_data['metodo_pago']);
+    error_log('user_type = ' . $user_type);
+
+    $resultado = $wpdb->insert($table_reservas, $reserva_data, $data_format);
+
+    if ($resultado === false) {
+        error_log('❌ ERROR AL INSERTAR: ' . $wpdb->last_error);
+        error_log('❌ QUERY: ' . $wpdb->last_query);
+        return array('success' => false, 'error' => 'Error guardando la reserva: ' . $wpdb->last_error);
+    }
+
+    // ✅✅✅ AQUÍ SE OBTIENE EL ID DE LA RESERVA RECIÉN CREADA
+    $reserva_id = $wpdb->insert_id;
+
+    // ✅✅✅ LOG DESPUÉS DE INSERTAR - VERIFICAR QUÉ SE GUARDÓ REALMENTE
+    $reserva_verificacion = $wpdb->get_row($wpdb->prepare(
+        "SELECT es_reserva_rapida, metodo_pago FROM $table_reservas WHERE id = %d",
+        $reserva_id
+    ));
+
+    error_log('=== VERIFICACIÓN DESPUÉS DE INSERTAR ===');
+    error_log('Reserva ID: ' . $reserva_id);
+    error_log('es_reserva_rapida en BD = ' . $reserva_verificacion->es_reserva_rapida);
+    error_log('metodo_pago en BD = ' . $reserva_verificacion->metodo_pago);
+
+    if ($reserva_verificacion->es_reserva_rapida != 1) {
+        error_log('❌❌❌ PROBLEMA: El campo no se guardó como 1, intentando UPDATE manual');
+
+        // Forzar update si no se guardó correctamente
+        $wpdb->update(
+            $table_reservas,
+            array('es_reserva_rapida' => 1),
+            array('id' => $reserva_id),
+            array('%d'),
+            array('%d')
+        );
+
+        error_log('UPDATE manual ejecutado. Query: ' . $wpdb->last_query);
+    }
+
+    // ✅✅✅ AHORA SÍ: REGISTRAR EN TABLA DE RESERVAS RÁPIDAS (SOLO PARA ADMIN)
+    if ($user_type === 'admin') {
+        $table_rapidas = $wpdb->prefix . 'reservas_rapidas';
+        
+        error_log('=== REGISTRANDO EN wp_reservas_rapidas ===');
+        error_log('reserva_id: ' . $reserva_id);
+        error_log('localizador: ' . $localizador);
+        error_log('user_id: ' . ($user['id'] ?? 0));
+        error_log('username: ' . ($user['username'] ?? 'admin'));
+        
+        $resultado_rapidas = $wpdb->insert(
+            $table_rapidas,
+            array(
+                'reserva_id' => $reserva_id,
+                'localizador' => $localizador,
+                'user_id' => $user['id'] ?? 0,
+                'username' => $user['username'] ?? 'admin',
+                'user_type' => 'admin',
+                'created_at' => current_time('mysql')
+            ),
+            array('%d', '%s', '%d', '%s', '%s', '%s')
+        );
+        
+        if ($resultado_rapidas === false) {
+            error_log('⚠️ Error registrando reserva rápida: ' . $wpdb->last_error);
+            error_log('⚠️ Query: ' . $wpdb->last_query);
+        } else {
+            error_log('✅ Reserva rápida registrada en wp_reservas_rapidas con ID: ' . $wpdb->insert_id);
+        }
+    } else {
+        error_log('ℹ️ No se registra en wp_reservas_rapidas porque user_type es: ' . $user_type);
+    }
+
+    return array(
+        'success' => true,
+        'reservation_id' => $reserva_id,
+        'localizador' => $localizador
+    );
+}
 
 
 
@@ -1287,290 +1298,328 @@ class ReservasReservaRapidaAdmin
     }
 
     /**
-     * Procesar reserva retroactiva - VERSIÓN CORREGIDA
-     */
-    public function process_reservation_retroactiva()
-    {
-        if (ob_get_level()) {
-            ob_clean();
+ * Procesar reserva retroactiva - VERSIÓN CORREGIDA CON REGISTRO EN wp_reservas_rapidas
+ */
+public function process_reservation_retroactiva()
+{
+    if (ob_get_level()) {
+        ob_clean();
+    }
+
+    header('Content-Type: application/json');
+
+    try {
+        error_log('=== INICIANDO PROCESS_RESERVATION_RETROACTIVA ===');
+
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'reservas_nonce')) {
+            wp_send_json_error('Error de seguridad');
+            return;
         }
 
-        header('Content-Type: application/json');
+        if (!session_id()) {
+            session_start();
+        }
 
-        try {
-            error_log('=== INICIANDO PROCESS_RESERVATION_RETROACTIVA ===');
+        if (!isset($_SESSION['reservas_user'])) {
+            wp_send_json_error('Sesión expirada');
+            return;
+        }
 
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'reservas_nonce')) {
-                wp_send_json_error('Error de seguridad');
+        $user = $_SESSION['reservas_user'];
+
+        if ($user['role'] !== 'super_admin') {
+            wp_send_json_error('Solo el Super Administrador puede crear reservas retroactivas');
+            return;
+        }
+
+        global $wpdb;
+
+        // ✅ MEJORAR OBTENCIÓN Y DECODIFICACIÓN DEL JSON
+        $reservation_data_json = stripslashes($_POST['reservation_data'] ?? '');
+
+        if (empty($reservation_data_json)) {
+            error_log('❌ reservation_data está vacío');
+            error_log('POST data: ' . print_r($_POST, true));
+            wp_send_json_error('Datos de reserva no proporcionados');
+            return;
+        }
+
+        error_log('=== JSON RECIBIDO ===');
+        error_log('Raw JSON length: ' . strlen($reservation_data_json));
+        error_log('Raw JSON: ' . $reservation_data_json);
+
+        $reservation_data = json_decode($reservation_data_json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('❌ ERROR JSON: ' . json_last_error_msg());
+            error_log('❌ JSON problemático: ' . $reservation_data_json);
+            wp_send_json_error('Error decodificando datos de reserva: ' . json_last_error_msg());
+            return;
+        }
+
+        if (!$reservation_data || !is_array($reservation_data)) {
+            error_log('❌ JSON decodificado no es un array válido');
+            wp_send_json_error('Datos de reserva no válidos');
+            return;
+        }
+
+        error_log('=== JSON DECODIFICADO CORRECTAMENTE ===');
+        error_log(print_r($reservation_data, true));
+
+        // ✅ VALIDAR CAMPOS OBLIGATORIOS DEL JSON CON MAYOR DETALLE
+        $required_fields = ['fecha', 'service_id', 'hora_ida', 'adultos', 'residentes', 'ninos_5_12', 'ninos_menores'];
+
+        foreach ($required_fields as $field) {
+            if (!isset($reservation_data[$field])) {
+                error_log("❌ Campo faltante en JSON: $field");
+                wp_send_json_error("Campo obligatorio faltante: $field");
                 return;
             }
+        }
 
-            if (!session_id()) {
-                session_start();
-            }
+        // Extraer y validar datos del JSON
+        $fecha = sanitize_text_field($reservation_data['fecha']);
+        $service_id = intval($reservation_data['service_id']);
+        $hora_ida = sanitize_text_field($reservation_data['hora_ida']);
+        $adultos = intval($reservation_data['adultos']);
+        $residentes = intval($reservation_data['residentes']);
+        $ninos_5_12 = intval($reservation_data['ninos_5_12']);
+        $ninos_menores = intval($reservation_data['ninos_menores']);
+        $precio_adulto = floatval($reservation_data['precio_adulto'] ?? 0);
+        $precio_nino = floatval($reservation_data['precio_nino'] ?? 0);
+        $precio_residente = floatval($reservation_data['precio_residente'] ?? 0);
+        $total_price = floatval($reservation_data['total_price'] ?? 0);
+        $descuento_grupo = floatval($reservation_data['descuento_grupo'] ?? 0);
 
-            if (!isset($_SESSION['reservas_user'])) {
-                wp_send_json_error('Sesión expirada');
-                return;
-            }
+        // ✅ MANEJO MEJORADO DE AGENCY_ID
+        $selected_agency_id = null;
+        if (isset($reservation_data['selected_agency_id']) && !empty($reservation_data['selected_agency_id']) && $reservation_data['selected_agency_id'] !== 'null') {
+            $selected_agency_id = intval($reservation_data['selected_agency_id']);
+        }
 
-            $user = $_SESSION['reservas_user'];
+        error_log('=== DATOS EXTRAÍDOS DEL JSON ===');
+        error_log("Fecha: $fecha");
+        error_log("Service ID: $service_id");
+        error_log("Agency ID: " . ($selected_agency_id ?? 'null'));
+        error_log("Total personas: " . ($adultos + $residentes + $ninos_5_12));
 
-            if ($user['role'] !== 'super_admin') {
-                wp_send_json_error('Solo el Super Administrador puede crear reservas retroactivas');
-                return;
-            }
+        // Validar campos obligatorios
+        if (empty($fecha) || $service_id <= 0 || empty($hora_ida)) {
+            wp_send_json_error('Datos de servicio incompletos - fecha: ' . $fecha . ', service_id: ' . $service_id . ', hora: ' . $hora_ida);
+            return;
+        }
 
-            global $wpdb;
+        // Validar datos del cliente
+        $nombre = sanitize_text_field($_POST['nombre'] ?? '');
+        $apellidos = sanitize_text_field($_POST['apellidos'] ?? '');
+        $email = sanitize_email($_POST['email'] ?? '');
+        $telefono = sanitize_text_field($_POST['telefono'] ?? '');
 
-            // ✅ MEJORAR OBTENCIÓN Y DECODIFICACIÓN DEL JSON
-            $reservation_data_json = stripslashes($_POST['reservation_data'] ?? '');
+        if (empty($nombre) || empty($apellidos) || empty($email) || empty($telefono)) {
+            wp_send_json_error('Todos los campos del cliente son obligatorios');
+            return;
+        }
 
-            if (empty($reservation_data_json)) {
-                error_log('❌ reservation_data está vacío');
-                error_log('POST data: ' . print_r($_POST, true));
-                wp_send_json_error('Datos de reserva no proporcionados');
-                return;
-            }
+        if (!is_email($email)) {
+            wp_send_json_error('Email no válido');
+            return;
+        }
 
-            error_log('=== JSON RECIBIDO ===');
-            error_log('Raw JSON length: ' . strlen($reservation_data_json));
-            error_log('Raw JSON: ' . $reservation_data_json);
-
-            $reservation_data = json_decode($reservation_data_json, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('❌ ERROR JSON: ' . json_last_error_msg());
-                error_log('❌ JSON problemático: ' . $reservation_data_json);
-                wp_send_json_error('Error decodificando datos de reserva: ' . json_last_error_msg());
-                return;
-            }
-
-            if (!$reservation_data || !is_array($reservation_data)) {
-                error_log('❌ JSON decodificado no es un array válido');
-                wp_send_json_error('Datos de reserva no válidos');
-                return;
-            }
-
-            error_log('=== JSON DECODIFICADO CORRECTAMENTE ===');
-            error_log(print_r($reservation_data, true));
-
-            // ✅ VALIDAR CAMPOS OBLIGATORIOS DEL JSON CON MAYOR DETALLE
-            $required_fields = ['fecha', 'service_id', 'hora_ida', 'adultos', 'residentes', 'ninos_5_12', 'ninos_menores'];
-
-            foreach ($required_fields as $field) {
-                if (!isset($reservation_data[$field])) {
-                    error_log("❌ Campo faltante en JSON: $field");
-                    wp_send_json_error("Campo obligatorio faltante: $field");
-                    return;
-                }
-            }
-
-            // Extraer y validar datos del JSON
-            $fecha = sanitize_text_field($reservation_data['fecha']);
-            $service_id = intval($reservation_data['service_id']);
-            $hora_ida = sanitize_text_field($reservation_data['hora_ida']);
-            $adultos = intval($reservation_data['adultos']);
-            $residentes = intval($reservation_data['residentes']);
-            $ninos_5_12 = intval($reservation_data['ninos_5_12']);
-            $ninos_menores = intval($reservation_data['ninos_menores']);
-            $precio_adulto = floatval($reservation_data['precio_adulto'] ?? 0);
-            $precio_nino = floatval($reservation_data['precio_nino'] ?? 0);
-            $precio_residente = floatval($reservation_data['precio_residente'] ?? 0);
-            $total_price = floatval($reservation_data['total_price'] ?? 0);
-            $descuento_grupo = floatval($reservation_data['descuento_grupo'] ?? 0);
-
-            // ✅ MANEJO MEJORADO DE AGENCY_ID
-            $selected_agency_id = null;
-            if (isset($reservation_data['selected_agency_id']) && !empty($reservation_data['selected_agency_id']) && $reservation_data['selected_agency_id'] !== 'null') {
-                $selected_agency_id = intval($reservation_data['selected_agency_id']);
-            }
-
-            error_log('=== DATOS EXTRAÍDOS DEL JSON ===');
-            error_log("Fecha: $fecha");
-            error_log("Service ID: $service_id");
-            error_log("Agency ID: " . ($selected_agency_id ?? 'null'));
-            error_log("Total personas: " . ($adultos + $residentes + $ninos_5_12));
-
-            // Validar campos obligatorios
-            if (empty($fecha) || $service_id <= 0 || empty($hora_ida)) {
-                wp_send_json_error('Datos de servicio incompletos - fecha: ' . $fecha . ', service_id: ' . $service_id . ', hora: ' . $hora_ida);
-                return;
-            }
-
-            // Validar datos del cliente
-            $nombre = sanitize_text_field($_POST['nombre'] ?? '');
-            $apellidos = sanitize_text_field($_POST['apellidos'] ?? '');
-            $email = sanitize_email($_POST['email'] ?? '');
-            $telefono = sanitize_text_field($_POST['telefono'] ?? '');
-
-            if (empty($nombre) || empty($apellidos) || empty($email) || empty($telefono)) {
-                wp_send_json_error('Todos los campos del cliente son obligatorios');
-                return;
-            }
-
-            if (!is_email($email)) {
-                wp_send_json_error('Email no válido');
-                return;
-            }
-
-            // Validar agencia si está seleccionada
-            if ($selected_agency_id) {
-                $table_agencies = $wpdb->prefix . 'reservas_agencies';
-                $agency_exists = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $table_agencies WHERE id = %d",
-                    $selected_agency_id
-                ));
-
-                if (!$agency_exists) {
-                    wp_send_json_error('La agencia seleccionada no existe');
-                    return;
-                }
-
-                error_log("✅ Agencia validada correctamente: ID $selected_agency_id");
-            }
-
-            // Obtener información del servicio
-            $table_servicios = $wpdb->prefix . 'reservas_servicios';
-
-            $servicio = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $table_servicios WHERE id = %d",
-                $service_id
+        // Validar agencia si está seleccionada
+        if ($selected_agency_id) {
+            $table_agencies = $wpdb->prefix . 'reservas_agencies';
+            $agency_exists = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $table_agencies WHERE id = %d",
+                $selected_agency_id
             ));
 
-            if (!$servicio) {
-                wp_send_json_error('Servicio no encontrado');
+            if (!$agency_exists) {
+                wp_send_json_error('La agencia seleccionada no existe');
                 return;
             }
 
-            $total_personas = $adultos + $residentes + $ninos_5_12;
-
-            // ✅ GENERAR LOCALIZADOR SEGÚN LA AGENCIA
-            if ($selected_agency_id) {
-                $agency_user = array('id' => $selected_agency_id);
-                $localizador = $this->generate_localizador($agency_user, 'agency');
-                error_log("✅ Localizador generado para agencia: $localizador");
-            } else {
-                $localizador = $this->generate_localizador($user, 'admin');
-                error_log("✅ Localizador generado para admin: $localizador");
-            }
-
-            // ✅ PROCESAR REGLA DE DESCUENTO SI EXISTE
-            $regla_descuento_json = null;
-            if (isset($reservation_data['regla_descuento_aplicada']) && $reservation_data['regla_descuento_aplicada'] !== null) {
-                $regla_descuento_json = json_encode($reservation_data['regla_descuento_aplicada']);
-            }
-
-            // ✅ CREAR RESERVA RETROACTIVA
-            $table_reservas = $wpdb->prefix . 'reservas_reservas';
-
-            $reserva_data = array(
-                'localizador' => $localizador,
-                'servicio_id' => $service_id,
-                'fecha' => $fecha,
-                'hora' => $hora_ida,
-                'nombre' => $nombre,
-                'apellidos' => $apellidos,
-                'email' => $email,
-                'telefono' => $telefono,
-                'adultos' => $adultos,
-                'residentes' => $residentes,
-                'ninos_5_12' => $ninos_5_12,
-                'ninos_menores' => $ninos_menores,
-                'total_personas' => $total_personas,
-                'precio_base' => $precio_adulto * $adultos + $precio_residente * $residentes + $precio_nino * $ninos_5_12,
-                'descuento_total' => $descuento_grupo,
-                'precio_final' => $total_price,
-                'regla_descuento_aplicada' => $regla_descuento_json,
-                'estado' => 'confirmada',
-                'metodo_pago' => 'reserva_retroactiva_admin',
-                'es_reserva_rapida' => 1, // ✅ MARCAR COMO RESERVA RÁPIDA
-                'created_at' => current_time('mysql'),
-                'updated_at' => current_time('mysql')
-            );
-
-            // ✅ AÑADIR AGENCY_ID SI ESTÁ SELECCIONADA
-            if ($selected_agency_id) {
-                $reserva_data['agency_id'] = $selected_agency_id;
-                error_log("✅ Asignando reserva a agencia ID: $selected_agency_id");
-            }
-
-            error_log('=== DATOS DE RESERVA RETROACTIVA ===');
-            error_log(print_r($reserva_data, true));
-
-            $resultado = $wpdb->insert($table_reservas, $reserva_data);
-
-            if ($resultado === false) {
-                error_log('❌ ERROR SQL: ' . $wpdb->last_error);
-                wp_send_json_error('Error guardando la reserva retroactiva: ' . $wpdb->last_error);
-                return;
-            }
-
-            $reserva_id = $wpdb->insert_id;
-            error_log('✅ Reserva retroactiva creada con ID: ' . $reserva_id);
-
-            // ✅ ENVIAR EMAILS CONSIDERANDO LA AGENCIA
-            try {
-                if ($selected_agency_id) {
-                    if (!class_exists('ReservasAgenciesAdmin')) {
-                        require_once RESERVAS_PLUGIN_PATH . 'includes/class-agencies-admin.php';
-                    }
-
-                    $agency_data = ReservasAgenciesAdmin::get_agency_info($selected_agency_id);
-
-                    if ($agency_data) {
-                        $agency_user = array(
-                            'id' => $selected_agency_id,
-                            'role' => 'agencia',
-                            'username' => $agency_data->agency_name,
-                            'agency_name' => $agency_data->agency_name,
-                            'email' => $agency_data->email
-                        );
-                        $this->send_confirmation_emails($reserva_id, $agency_user, 'agency');
-                        error_log('✅ Emails enviados considerando agencia');
-                    } else {
-                        error_log('⚠️ No se pudieron cargar datos de la agencia para emails');
-                    }
-                } else {
-                    $this->send_confirmation_emails($reserva_id, $user, 'admin');
-                    error_log('✅ Emails enviados como admin');
-                }
-            } catch (Exception $e) {
-                error_log('⚠️ Error enviando emails: ' . $e->getMessage());
-                // No fallar por emails, la reserva ya está creada
-            }
-
-            // ✅ PREPARAR RESPUESTA FINAL
-            $mensaje = $selected_agency_id ?
-                'Reserva retroactiva asignada a agencia procesada correctamente' :
-                'Reserva retroactiva procesada correctamente';
-
-            $response_data = array(
-                'mensaje' => $mensaje,
-                'localizador' => $localizador,
-                'reserva_id' => $reserva_id,
-                'admin_user' => $user['username'],
-                'user_type' => 'admin_retroactiva',
-                'assigned_agency_id' => $selected_agency_id,
-                'detalles' => array(
-                    'fecha' => date('d/m/Y', strtotime($fecha)),
-                    'hora' => substr($hora_ida, 0, 5),
-                    'personas' => $total_personas . ' persona' . ($total_personas > 1 ? 's' : ''),
-                    'precio_final' => number_format($total_price, 2, ',', '.')
-                )
-            );
-
-            error_log('✅ RESERVA RETROACTIVA COMPLETADA EXITOSAMENTE');
-            error_log('Localizador final: ' . $localizador);
-            error_log('Asignada a agencia: ' . ($selected_agency_id ? 'Sí (ID: ' . $selected_agency_id . ')' : 'No'));
-
-            wp_send_json_success($response_data);
-        } catch (Exception $e) {
-            error_log('❌ RESERVA RETROACTIVA EXCEPTION: ' . $e->getMessage());
-            error_log('❌ STACK TRACE: ' . $e->getTraceAsString());
-            wp_send_json_error('Error interno del servidor: ' . $e->getMessage());
+            error_log("✅ Agencia validada correctamente: ID $selected_agency_id");
         }
+
+        // Obtener información del servicio
+        $table_servicios = $wpdb->prefix . 'reservas_servicios';
+
+        $servicio = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table_servicios WHERE id = %d",
+            $service_id
+        ));
+
+        if (!$servicio) {
+            wp_send_json_error('Servicio no encontrado');
+            return;
+        }
+
+        $total_personas = $adultos + $residentes + $ninos_5_12;
+
+        // ✅ GENERAR LOCALIZADOR SEGÚN LA AGENCIA
+        if ($selected_agency_id) {
+            $agency_user = array('id' => $selected_agency_id);
+            $localizador = $this->generate_localizador($agency_user, 'agency');
+            error_log("✅ Localizador generado para agencia: $localizador");
+        } else {
+            $localizador = $this->generate_localizador($user, 'admin');
+            error_log("✅ Localizador generado para admin: $localizador");
+        }
+
+        // ✅ PROCESAR REGLA DE DESCUENTO SI EXISTE
+        $regla_descuento_json = null;
+        if (isset($reservation_data['regla_descuento_aplicada']) && $reservation_data['regla_descuento_aplicada'] !== null) {
+            $regla_descuento_json = json_encode($reservation_data['regla_descuento_aplicada']);
+        }
+
+        // ✅ CREAR RESERVA RETROACTIVA
+        $table_reservas = $wpdb->prefix . 'reservas_reservas';
+
+        $reserva_data = array(
+            'localizador' => $localizador,
+            'servicio_id' => $service_id,
+            'fecha' => $fecha,
+            'hora' => $hora_ida,
+            'nombre' => $nombre,
+            'apellidos' => $apellidos,
+            'email' => $email,
+            'telefono' => $telefono,
+            'adultos' => $adultos,
+            'residentes' => $residentes,
+            'ninos_5_12' => $ninos_5_12,
+            'ninos_menores' => $ninos_menores,
+            'total_personas' => $total_personas,
+            'precio_base' => $precio_adulto * $adultos + $precio_residente * $residentes + $precio_nino * $ninos_5_12,
+            'descuento_total' => $descuento_grupo,
+            'precio_final' => $total_price,
+            'regla_descuento_aplicada' => $regla_descuento_json,
+            'estado' => 'confirmada',
+            'metodo_pago' => 'reserva_retroactiva_admin',
+            'es_reserva_rapida' => 1, // ✅ MARCAR COMO RESERVA RÁPIDA
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql')
+        );
+
+        // ✅ AÑADIR AGENCY_ID SI ESTÁ SELECCIONADA
+        if ($selected_agency_id) {
+            $reserva_data['agency_id'] = $selected_agency_id;
+            error_log("✅ Asignando reserva a agencia ID: $selected_agency_id");
+        }
+
+        error_log('=== DATOS DE RESERVA RETROACTIVA ===');
+        error_log(print_r($reserva_data, true));
+
+        $resultado = $wpdb->insert($table_reservas, $reserva_data);
+
+        if ($resultado === false) {
+            error_log('❌ ERROR SQL: ' . $wpdb->last_error);
+            wp_send_json_error('Error guardando la reserva retroactiva: ' . $wpdb->last_error);
+            return;
+        }
+
+        // ✅✅✅ PRIMERO OBTENER EL ID
+        $reserva_id = $wpdb->insert_id;
+        error_log('✅ Reserva retroactiva creada con ID: ' . $reserva_id);
+
+        // ✅✅✅ AHORA SÍ: REGISTRAR EN TABLA DE RESERVAS RÁPIDAS (SOLO SI NO ES DE AGENCIA)
+        $table_rapidas = $wpdb->prefix . 'reservas_rapidas';
+
+        error_log('=== REGISTRANDO RESERVA RETROACTIVA EN wp_reservas_rapidas ===');
+        error_log('reserva_id: ' . $reserva_id);
+        error_log('localizador: ' . $localizador);
+        error_log('selected_agency_id: ' . ($selected_agency_id ?? 'null'));
+
+        // ✅ DETERMINAR SI SE ASIGNA A AGENCIA O ES DEL ADMIN
+        if ($selected_agency_id) {
+            error_log('ℹ️ Reserva retroactiva asignada a agencia, NO se registra en wp_reservas_rapidas');
+        } else {
+            // Solo registrar si NO está asignada a agencia
+            error_log('✅ Registrando reserva retroactiva del admin en wp_reservas_rapidas');
+            
+            $resultado_rapidas = $wpdb->insert(
+                $table_rapidas,
+                array(
+                    'reserva_id' => $reserva_id,
+                    'localizador' => $localizador,
+                    'user_id' => $user['id'] ?? 0,
+                    'username' => $user['username'] ?? 'super_admin',
+                    'user_type' => 'admin',
+                    'created_at' => current_time('mysql')
+                ),
+                array('%d', '%s', '%d', '%s', '%s', '%s')
+            );
+            
+            if ($resultado_rapidas === false) {
+                error_log('⚠️ Error registrando reserva rápida retroactiva: ' . $wpdb->last_error);
+                error_log('⚠️ Query: ' . $wpdb->last_query);
+            } else {
+                error_log('✅ Reserva rápida retroactiva registrada en wp_reservas_rapidas con ID: ' . $wpdb->insert_id);
+            }
+        }
+
+        // ✅ ENVIAR EMAILS CONSIDERANDO LA AGENCIA
+        try {
+            if ($selected_agency_id) {
+                if (!class_exists('ReservasAgenciesAdmin')) {
+                    require_once RESERVAS_PLUGIN_PATH . 'includes/class-agencies-admin.php';
+                }
+
+                $agency_data = ReservasAgenciesAdmin::get_agency_info($selected_agency_id);
+
+                if ($agency_data) {
+                    $agency_user = array(
+                        'id' => $selected_agency_id,
+                        'role' => 'agencia',
+                        'username' => $agency_data->agency_name,
+                        'agency_name' => $agency_data->agency_name,
+                        'email' => $agency_data->email
+                    );
+                    $this->send_confirmation_emails($reserva_id, $agency_user, 'agency');
+                    error_log('✅ Emails enviados considerando agencia');
+                } else {
+                    error_log('⚠️ No se pudieron cargar datos de la agencia para emails');
+                }
+            } else {
+                $this->send_confirmation_emails($reserva_id, $user, 'admin');
+                error_log('✅ Emails enviados como admin');
+            }
+        } catch (Exception $e) {
+            error_log('⚠️ Error enviando emails: ' . $e->getMessage());
+            // No fallar por emails, la reserva ya está creada
+        }
+
+        // ✅ PREPARAR RESPUESTA FINAL
+        $mensaje = $selected_agency_id ?
+            'Reserva retroactiva asignada a agencia procesada correctamente' :
+            'Reserva retroactiva procesada correctamente';
+
+        $response_data = array(
+            'mensaje' => $mensaje,
+            'localizador' => $localizador,
+            'reserva_id' => $reserva_id,
+            'admin_user' => $user['username'],
+            'user_type' => 'admin_retroactiva',
+            'assigned_agency_id' => $selected_agency_id,
+            'detalles' => array(
+                'fecha' => date('d/m/Y', strtotime($fecha)),
+                'hora' => substr($hora_ida, 0, 5),
+                'personas' => $total_personas . ' persona' . ($total_personas > 1 ? 's' : ''),
+                'precio_final' => number_format($total_price, 2, ',', '.')
+            )
+        );
+
+        error_log('✅ RESERVA RETROACTIVA COMPLETADA EXITOSAMENTE');
+        error_log('Localizador final: ' . $localizador);
+        error_log('Asignada a agencia: ' . ($selected_agency_id ? 'Sí (ID: ' . $selected_agency_id . ')' : 'No'));
+        error_log('Registrada en wp_reservas_rapidas: ' . ($selected_agency_id ? 'NO' : 'SÍ'));
+
+        wp_send_json_success($response_data);
+    } catch (Exception $e) {
+        error_log('❌ RESERVA RETROACTIVA EXCEPTION: ' . $e->getMessage());
+        error_log('❌ STACK TRACE: ' . $e->getTraceAsString());
+        wp_send_json_error('Error interno del servidor: ' . $e->getMessage());
     }
+}
 
     /**
      * Obtener agencias disponibles para asignar reservas
