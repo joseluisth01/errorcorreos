@@ -566,6 +566,153 @@ private static function get_admin_email_by_service($reserva_data)
 }
 
 
+
+/**
+ * Enviar email INMEDIATO al administrador para visitas guiadas
+ */
+public static function send_admin_visita_notification_immediate($reserva_data)
+{
+    error_log('=== ENVIANDO EMAIL INMEDIATO A ADMIN DE VISITAS ===');
+    
+    $config = self::get_email_config();
+    
+    // ✅ OBTENER EMAIL DE VISITAS
+    $admin_email = ReservasConfigurationAdmin::get_config('email_visitas', get_option('admin_email'));
+    
+    if (empty($admin_email)) {
+        error_log("❌ No hay email_visitas configurado");
+        return array('success' => false, 'message' => 'Email de visitas no configurado');
+    }
+    
+    error_log("📧 Enviando a: $admin_email");
+    
+    $subject = "Nueva Reserva de Visita Guiada - " . $reserva_data['localizador'];
+    
+    $message = self::build_admin_visita_notification_template($reserva_data);
+    
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . $config['nombre_remitente'] . ' <' . $config['email_remitente'] . '>'
+    );
+    
+    $sent = wp_mail($admin_email, $subject, $message, $headers);
+    
+    if ($sent) {
+        error_log("✅ Email enviado inmediatamente al admin de visitas: " . $admin_email);
+        return array('success' => true, 'message' => 'Email enviado al admin de visitas');
+    } else {
+        global $phpmailer;
+        $error = isset($phpmailer) ? $phpmailer->ErrorInfo : 'Error desconocido';
+        error_log("❌ Error enviando email al admin de visitas: " . $error);
+        return array('success' => false, 'message' => 'Error enviando email: ' . $error);
+    }
+}
+
+/**
+ * Template de email para admin de visitas
+ */
+private static function build_admin_visita_notification_template($reserva)
+{
+    $fecha_formateada = date('d/m/Y', strtotime($reserva['fecha']));
+    $fecha_creacion = date('d/m/Y H:i', strtotime($reserva['created_at'] ?? 'now'));
+    
+    $idioma_display = ucfirst($reserva['idioma'] ?? 'español');
+
+    return "
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Nueva Reserva de Visita Guiada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    </style>
+</head>
+<body style='font-family: \"Inter\", -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: #2D2D2D; max-width: 700px; margin: 0 auto; padding: 0; background: #FAFAFA;'>
+    
+    <!-- Header -->
+    <div style='background: linear-gradient(135deg, #0073aa 0%, #005177 100%); color: #FFFFFF; text-align: center; padding: 50px 30px;'>
+        <h1 style='margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;'>NUEVA RESERVA DE VISITA GUIADA</h1>
+        <div style='width: 60px; height: 3px; background: #EFCF4B; margin: 20px auto; border-radius: 2px;'></div>
+        <p style='margin: 0; font-size: 18px; font-weight: 500; opacity: 0.95;'>Se ha recibido una nueva reserva</p>
+    </div>
+
+    <!-- Localizador -->
+    <div style='background: #EFCF4B; padding: 30px; text-align: center; border-bottom: 1px solid #E0E0E0;'>
+        <h2 style='margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: #2D2D2D; text-transform: uppercase; letter-spacing: 1px;'>LOCALIZADOR</h2>
+        <div style='font-size: 28px; font-weight: 700; color: #871727; letter-spacing: 3px; font-family: monospace; margin: 10px 0;'>" . $reserva['localizador'] . "</div>
+    </div>
+
+    <!-- Información -->
+    <div style='padding: 40px 30px; background: #FFFFFF;'>
+        <h3 style='margin: 0 0 25px 0; font-size: 20px; font-weight: 700; color: #0073aa; text-align: center;'>Detalles de la Reserva</h3>
+        
+        <table style='width: 100%; border-collapse: collapse; background: #FFFFFF; border: 2px solid #0073aa; border-radius: 8px; overflow: hidden;'>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Agencia:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>" . ($reserva['agency_name'] ?? 'N/A') . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Fecha:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>" . $fecha_formateada . " - " . substr($reserva['hora'], 0, 5) . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Cliente:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>" . $reserva['nombre'] . " " . $reserva['apellidos'] . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Email:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>" . $reserva['email'] . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Teléfono:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; color: #666;'>" . $reserva['telefono'] . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Adultos:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>" . $reserva['adultos'] . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Niños (5-12):</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>" . $reserva['ninos'] . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Niños (-5 años):</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>" . $reserva['ninos_menores'] . "</td>
+            </tr>
+            <tr>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; font-weight: 600; color: #2D2D2D;'>Idioma:</td>
+                <td style='padding: 15px 25px; border-bottom: 1px solid #E0E0E0; text-align: right; font-weight: 700; color: #0073aa;'>$idioma_display</td>
+            </tr>
+            <tr style='background: #0073aa;'>
+                <td style='padding: 20px 25px; font-size: 20px; font-weight: 700; color: #FFFFFF;'>TOTAL:</td>
+                <td style='padding: 20px 25px; text-align: right; font-size: 24px; font-weight: 700; color: #FFFFFF;'>" . number_format($reserva['precio_total'], 2) . "€</td>
+            </tr>
+        </table>
+        
+        <div style='background: #E8F4F8; padding: 25px; border-radius: 8px; margin-top: 25px; border-left: 4px solid #0073aa;'>
+            <h4 style='margin: 0 0 15px 0; color: #0073aa;'>✅ Estado:</h4>
+            <ul style='margin: 0; padding-left: 20px; color: #2D2D2D;'>
+                <li>Reserva confirmada y pagada</li>
+                <li>Cliente notificado con billete PDF</li>
+                <li>Agencia notificada</li>
+                <li>Fecha de reserva: $fecha_creacion</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style='text-align: center; padding: 40px 30px; background: #2D2D2D; color: #FFFFFF;'>
+        <p style='margin: 0; color: #0073aa; font-weight: 600; font-size: 16px;'>
+            Sistema de Reservas - Visitas Guiadas Medina Azahara
+        </p>
+    </div>
+
+</body>
+</html>";
+}
+
+
 private static function check_email_throttle($email_type = 'general')
 {
     $throttle_key = 'reservas_email_throttle_' . $email_type;
